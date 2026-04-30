@@ -27,7 +27,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var section1: ConstraintLayout
     private lateinit var section2: ConstraintLayout
     private lateinit var section3: ConstraintLayout
-    private lateinit var section4: ConstraintLayout
     private lateinit var darkModeToggle: FrameLayout
 
     private var isDarkMode = false
@@ -44,7 +43,6 @@ class MainActivity : AppCompatActivity() {
         section1 = findViewById(R.id.section1)
         section2 = findViewById(R.id.section2)
         section3 = findViewById(R.id.section3)
-        section4 = findViewById(R.id.section4)
         darkModeToggle = findViewById(R.id.darkModeToggle)
 
         // Setup Dark Mode Toggle
@@ -53,10 +51,9 @@ class MainActivity : AppCompatActivity() {
         }
         
         // Setup Navigation Buttons
-        findViewById<Button>(R.id.btn_s1).setOnClickListener { openCategory("ZyNS") }
-        findViewById<Button>(R.id.btn_s2).setOnClickListener { openCategory("VAPES") }
-        findViewById<Button>(R.id.btn_s3).setOnClickListener { openCategory("CIGERATES") }
-        findViewById<Button>(R.id.btn_s4).setOnClickListener { openCategory("ZOOTBOX LEGENDARY LOOT") }
+        findViewById<Button>(R.id.btn_s1).setOnClickListener { openCategory("VAPES") }
+        findViewById<Button>(R.id.btn_s2).setOnClickListener { openCategory("CIGARETTES") }
+        findViewById<Button>(R.id.btn_s3).setOnClickListener { openCategory("POUCHES") }
 
         // Start hardware service
         try {
@@ -102,17 +99,12 @@ class MainActivity : AppCompatActivity() {
         val s3Light = ContextCompat.getColor(this, R.color.grid_card_3_light)
         val s3Dark = ContextCompat.getColor(this, R.color.grid_card_3_dark)
         
-        // Section 4: Blue
-        val s4Light = ContextCompat.getColor(this, R.color.grid_card_4_light)
-        val s4Dark = ContextCompat.getColor(this, R.color.grid_card_4_dark)
-
         // Apply
         rootLayout.setBackgroundColor(if (isDarkMode) bgDark else bgLight)
-        
+
         section1.backgroundTintList = ColorStateList.valueOf(if (isDarkMode) s1Dark else s1Light)
         section2.backgroundTintList = ColorStateList.valueOf(if (isDarkMode) s2Dark else s2Light)
         section3.backgroundTintList = ColorStateList.valueOf(if (isDarkMode) s3Dark else s3Light)
-        section4.backgroundTintList = ColorStateList.valueOf(if (isDarkMode) s4Dark else s4Light)
         
         // In a real app, we would also update text colors here by finding all TextViews 
         // or using a proper Theme attribute system.
@@ -121,7 +113,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupEntranceAnimations() {
         // Slide up animation for sections
-        val sections = listOf(section4, section3, section2, section1) // Bottom to top
+        val sections = listOf(section3, section2, section1) // Bottom to top
         
         sections.forEachIndexed { index, view ->
             view.alpha = 0f

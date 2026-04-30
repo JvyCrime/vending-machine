@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,7 +18,7 @@
         android:elevation="100dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
-        
+
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
@@ -27,18 +26,17 @@
             app:tint="@color/white" />
     </FrameLayout>
 
-    <!-- SECTION 4 (Bottom Layer) -->
+    <!-- SECTION 3 (Bottom Layer) - POUCHES -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/section4"
+        android:id="@+id/section3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="-96dp"
         android:paddingTop="96dp"
-        android:background="@color/grid_card_4_light"
-        app:layout_constraintTop_toBottomOf="@id/section3"
+        android:background="@color/grid_card_3_light"
+        app:layout_constraintTop_toBottomOf="@id/section2"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Watermark -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,13 +51,12 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-        <!-- Content Grid -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:weightSum="5">
-            
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -67,11 +64,11 @@
                 android:orientation="vertical"
                 android:gravity="center_vertical"
                 android:paddingStart="48dp">
-                
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ZOOTBOX"
+                    android:text="21+ ONLY"
                     android:fontFamily="@font/oswald"
                     android:textSize="14sp"
                     android:letterSpacing="0.1"
@@ -81,7 +78,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ZOOTBOX"
+                    android:text="POUCHES"
                     android:fontFamily="@font/oswald"
                     android:textSize="48sp"
                     android:textColor="@color/white"
@@ -90,17 +87,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="$180.00"
+                    android:text="21+"
                     android:fontFamily="@font/oswald"
                     android:textSize="60sp"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/btn_s4"
+                    android:id="@+id/btn_s3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ADD TO BAG"
+                    android:text="BROWSE"
                     android:textColor="#0c4a6e"
                     android:backgroundTint="@color/white"
                     android:layout_marginTop="16dp" />
@@ -116,20 +113,19 @@
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- SECTION 3 (Layer 2) -->
+    <!-- SECTION 2 (Layer 2) - CIGARETTES -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/section3"
+        android:id="@+id/section2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="-96dp"
         android:paddingTop="96dp"
         android:background="@drawable/bg_curve_bottom_left"
-        android:backgroundTint="@color/grid_card_3_light"
-        android:elevation="10dp"
-        app:layout_constraintTop_toBottomOf="@id/section2"
-        app:layout_constraintHeight_percent="0.4"> 
-        
-        <!-- Watermark -->
+        android:backgroundTint="@color/grid_primary"
+        android:elevation="20dp"
+        app:layout_constraintTop_toBottomOf="@id/section1"
+        app:layout_constraintHeight_percent="0.45">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -149,7 +145,7 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:weightSum="5">
-            
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -157,32 +153,42 @@
                 android:orientation="vertical"
                 android:gravity="center_vertical"
                 android:paddingStart="48dp">
-                
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ZOOTBOX"
+                    android:text="21+ ONLY"
                     android:fontFamily="@font/oswald"
-                    android:textSize="48sp"
-                    android:textColor="#0D0D12"
+                    android:textSize="14sp"
+                    android:letterSpacing="0.1"
+                    android:textColor="@color/white"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="$150.15"
+                    android:text="CIGARETTES"
+                    android:fontFamily="@font/oswald"
+                    android:textSize="48sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="21+"
                     android:fontFamily="@font/oswald"
                     android:textSize="60sp"
-                    android:textColor="#0D0D12"
+                    android:textColor="@color/white"
                     android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/btn_s3"
+                    android:id="@+id/btn_s2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="DETAILS"
-                    android:textColor="@color/white"
-                    android:backgroundTint="#0D0D12"
+                    android:text="BROWSE"
+                    android:textColor="@color/grid_primary"
+                    android:backgroundTint="@color/white"
                     android:layout_marginTop="16dp" />
             </LinearLayout>
 
@@ -196,88 +202,7 @@
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <!-- SECTION 2 (Layer 3) -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/section2"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="-96dp"
-        android:paddingTop="96dp"
-        android:background="@drawable/bg_curve_bottom_left"
-        android:backgroundTint="@color/grid_primary"
-        android:elevation="20dp"
-        app:layout_constraintTop_toBottomOf="@id/section1"
-        app:layout_constraintHeight_percent="0.4">
-
-        <!-- Watermark -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ZOOTBOX"
-            android:fontFamily="@font/oswald"
-            android:textSize="140sp"
-            android:textColor="#0D000000"
-            android:textStyle="bold"
-            android:includeFontPadding="false"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:weightSum="5">
-            
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="3"
-                android:orientation="vertical"
-                android:gravity="center_vertical"
-                android:paddingStart="48dp">
-                
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ZOOTBOX"
-                    android:fontFamily="@font/oswald"
-                    android:textSize="48sp"
-                    android:textColor="@color/white"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="$150.15"
-                    android:fontFamily="@font/oswald"
-                    android:textSize="60sp"
-                    android:textColor="@color/white"
-                    android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/btn_s2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="VIEW ITEM"
-                    android:textColor="@color/grid_primary"
-                    android:backgroundTint="@color/white"
-                    android:layout_marginTop="16dp" />
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:src="@drawable/img_category_vapes"
-                android:padding="32dp"
-                android:scaleType="fitCenter" />
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- SECTION 1 (Top Layer) -->
+    <!-- SECTION 1 (Top Layer) - VAPES -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/section1"
         android:layout_width="match_parent"
@@ -286,9 +211,8 @@
         android:backgroundTint="@color/grid_card_1_light"
         android:elevation="30dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHeight_percent="0.25">
+        app:layout_constraintHeight_percent="0.33">
 
-        <!-- Watermark -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -308,7 +232,7 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:weightSum="5">
-            
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -316,11 +240,21 @@
                 android:orientation="vertical"
                 android:gravity="center_vertical"
                 android:paddingStart="48dp">
-                
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ZOOTBOX"
+                    android:text="21+ ONLY"
+                    android:fontFamily="@font/oswald"
+                    android:textSize="14sp"
+                    android:letterSpacing="0.1"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="VAPES"
                     android:fontFamily="@font/oswald"
                     android:textSize="48sp"
                     android:textColor="@color/white"
@@ -329,7 +263,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="$120.00"
+                    android:text="21+"
                     android:fontFamily="@font/oswald"
                     android:textSize="60sp"
                     android:textColor="@color/white"
@@ -339,7 +273,7 @@
                     android:id="@+id/btn_s1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="SHOP NOW"
+                    android:text="BROWSE"
                     android:textColor="@color/grid_card_1_light"
                     android:backgroundTint="@color/white"
                     android:layout_marginTop="16dp" />
@@ -349,7 +283,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:src="@drawable/img_zyn_citrus"
+                android:src="@drawable/img_category_vapes"
                 android:padding="32dp"
                 android:scaleType="fitCenter" />
         </LinearLayout>
