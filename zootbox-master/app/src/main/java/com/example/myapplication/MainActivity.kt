@@ -102,18 +102,20 @@ class MainActivity : AppCompatActivity() {
         // Plus one Digital Donation item
         // Note: videoFileName assumes files are in /storage/emulated/0/Movies/ZootBox/
         val products = listOf(
-            Product("01", "ZOOT VAPE X", "1", "1", R.drawable.zyn, price = 29.99, ageRestriction = 21, videoFileName = "zoot_vape_x.mp4"),
-            Product("02", "NIGHT OWL CAM", "1", "2", R.drawable.zyn, price = 15.99, videoFileName = "night_owl_cam.mp4"),
-            Product("03", "ZYN CITRUS", "1", "3", R.drawable.img_zyn_citrus, backgroundRes = R.drawable.bg_zyn_citrus_gradient, price = 8.99, ageRestriction = 21, scaleX = 0.95f, scaleY = 0.95f, videoFileName = "zyn_citrus.mp4"),
-            Product("04", "RED BULL 12OZ", "1", "4", R.drawable.zyn, price = 4.99, videoFileName = "red_bull.mp4"),
-            Product("05", "LIGHTER GOLD", "1", "5", R.drawable.zyn, price = 2.99, ageRestriction = 18, videoFileName = "lighter_gold.mp4"),
-            Product("06", "ROLLING PAPERS", "1", "6", R.drawable.zyn, price = 3.99, ageRestriction = 18, videoFileName = "rolling_papers.mp4"),
-            Product("07", "ENERGY SHOT", "1", "7", R.drawable.zyn, price = 3.49, videoFileName = "energy_shot.mp4"),
-            Product("08", "GUM MINT", "1", "8", R.drawable.zyn, price = 1.99, videoFileName = "gum_mint.mp4"),
-            Product("09", "CONDOM PACK", "1", "9", R.drawable.zyn, price = 5.99, videoFileName = "condom_pack.mp4"),
-            Product("10", "WATER 500ML", "1", "10", R.drawable.zyn, price = 2.49, videoFileName = "water.mp4"),
-            // Digital Item
-            Product("11", "Donate to the Autism Fund", "0", "0", R.drawable.img_donate, isDigital = true, price = 5.00, videoFileName = "donate.mp4")
+            // VAPES
+            Product("01", "FUME ULTRA 2500", "1", "1", R.drawable.img_fume_ultra_strawberry_banana, price = 16.99, ageRestriction = 21, videoFileName = "fume_ultra.mp4", category = "VAPES"),
+            Product("02", "LOST MARY NERA 70K", "1", "2", R.drawable.img_lost_mary, price = 24.99, ageRestriction = 21, videoFileName = "lost_mary.mp4", category = "VAPES"),
+            Product("03", "OFF STAMP CUBE KIT", "1", "3", R.drawable.img_off_stamp_black_mint, price = 17.99, ageRestriction = 21, videoFileName = "off_stamp.mp4", category = "VAPES"),
+            Product("04", "RAZ 25K LTX", "1", "4", R.drawable.img_raz, price = 19.99, ageRestriction = 21, videoFileName = "raz.mp4", category = "VAPES"),
+            Product("05", "GEEK BAR PULSE X 40K", "1", "5", R.drawable.img_geek_bar, price = 21.99, ageRestriction = 21, videoFileName = "geek_bar.mp4", category = "VAPES"),
+            // POUCHES
+            Product("06", "ZYN CITRUS 6MG", "2", "1", R.drawable.img_zyn_citrus_6mg, price = 8.99, ageRestriction = 21, videoFileName = "zyn_citrus.mp4", category = "POUCHES"),
+            Product("07", "ZYN COOL MINT 6MG", "2", "2", R.drawable.img_zyn_cool_mint_6mg, price = 8.99, ageRestriction = 21, videoFileName = "zyn_cool_mint.mp4", category = "POUCHES"),
+            Product("08", "ZYN WINTERGREEN 6MG", "2", "3", R.drawable.img_zyn_wintergreen_6mg, price = 8.99, ageRestriction = 21, videoFileName = "zyn_wintergreen.mp4", category = "POUCHES"),
+            Product("09", "ZYN SPEARMINT 3MG", "2", "4", R.drawable.img_zyn_spearmint_3mg, price = 8.99, ageRestriction = 21, videoFileName = "zyn_spearmint.mp4", category = "POUCHES"),
+            Product("10", "ZYN PEPPERMINT 3MG", "2", "5", R.drawable.img_zyn_peppermint_3mg, price = 8.99, ageRestriction = 21, videoFileName = "zyn_peppermint.mp4", category = "POUCHES"),
+            // CIGARETTES
+            Product("11", "NEWPORTS", "3", "1", R.drawable.img_newport, price = 13.99, ageRestriction = 21, videoFileName = "newports.mp4", category = "CIGARETTES")
         )
 
         val adapter = ProductAdapter(products) { product ->

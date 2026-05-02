@@ -21,7 +21,8 @@ data class Product(
     val ageRestriction: Int? = null,
     val scaleX: Float = 1.71f,
     val scaleY: Float = 1.76f,
-    val videoFileName: String? = null
+    val videoFileName: String? = null,
+    val category: String = "General"
 )
 
 class ProductAdapter(
