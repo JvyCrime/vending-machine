@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Single ad slide layout. Background color is set programmatically
+    in IdleActivity.kt from AdSlide.bgColor.
+
+    TODO — Upgrading to a full ad creative:
+      • To use a full-bleed IMAGE background:
+          1. Add an ImageView as the first child of this FrameLayout with
+             layout_width/height="match_parent" and scaleType="centerCrop".
+          2. Set the image resource in IdleActivity.kt → inflateSlides().
+          3. Hide or remove the LinearLayout below if the creative is self-contained.
+
+      • To use a VIDEO ad:
+          1. Replace the ImageView above with a TextureView (or VideoView).
+          2. Drive playback from IdleActivity.kt using MediaPlayer + TextureView,
+             or use ExoPlayer (add dependency: androidx.media3:media3-exoplayer).
+          3. Store the video filename in AdSlide.kt and load it in inflateSlides().
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Centered content column: image → badge → title → subtitle. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingHorizontal="48dp">
+
+        <!--
+        Hero / product image.
+        Currently populated with an existing product drawable as a placeholder.
+
+        TODO: For each ad slot, add a dedicated ad-format image to res/drawable/ and
+              update the corresponding AdSlide.imageRes in IdleActivity.kt.
+              Recommended spec: transparent-background PNG or square WebP, minimum 400×400 px.
+              Name the file clearly, e.g. ad_fume_ultra_banner.png
+        -->
+        <ImageView
+            android:id="@+id/iv_ad_image"
+            android:layout_width="260dp"
+            android:layout_height="260dp"
+            android:scaleType="centerInside"
+            android:layout_marginBottom="20dp" />
+
+        <!--
+        Badge / label pill (e.g. "IN STOCK", "NEW ARRIVAL").
+        TODO: Update badgeText in IdleActivity.kt for each ad slot.
+        -->
+        <TextView
+            android:id="@+id/tv_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="5dp"
+            android:textSize="11sp"
+            android:letterSpacing="0.12"
+            android:textColor="@color/abs_fog"
+            android:fontFamily="@font/archivo_black"
+            android:background="@drawable/bg_abs_badge_dark"
+            android:layout_marginBottom="14dp" />
+
+        <!--
+        Brand / product headline (large text).
+        TODO: Update adTitle in IdleActivity.kt to the final campaign headline.
+        -->
+        <TextView
+            android:id="@+id/tv_ad_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:lineSpacingMultiplier="0.95"
+            android:textColor="@color/abs_bone"
+            android:fontFamily="@font/archivo_black"
+            android:layout_marginBottom="10dp" />
+
+        <!--
+        Tagline / offer copy (smaller, secondary text).
+        TODO: Update adSubtitle in IdleActivity.kt to the final tagline or offer.
+        -->
+        <TextView
+            android:id="@+id/tv_ad_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:textColor="@color/abs_fog"
+            android:fontFamily="@font/archivo_black" />
+
+    </LinearLayout>
+
+</FrameLayout>

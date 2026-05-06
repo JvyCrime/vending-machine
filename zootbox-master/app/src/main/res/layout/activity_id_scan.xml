@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/abs_black">
+
+    <!-- Watercolor atmosphere -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_abs_watercolor"
+        android:importantForAccessibility="no" />
 
     <!-- IDLE STATE -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -15,17 +21,19 @@
         android:visibility="visible">
 
         <TextView
-            android:id="@+id/text_zb"
+            android:id="@+id/text_insert_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/archivo_black"
-            android:text="ZB"
-            android:textColor="@color/black"
-            android:textSize="120sp"
-            android:shadowColor="@color/black"
+            android:text="INSERT ID"
+            android:textColor="@color/abs_bone"
+            android:textSize="72sp"
+            android:shadowColor="@color/abs_black"
             android:shadowDx="8"
             android:shadowDy="8"
             android:shadowRadius="0.1"
+            android:letterSpacing="-0.01"
+            android:textAllCaps="true"
             app:layout_constraintBottom_toTopOf="@+id/card_container_idle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -33,13 +41,14 @@
             app:layout_constraintVertical_chainStyle="packed"
             android:layout_marginBottom="32dp" />
 
-        <!-- Hard Shadow for Card -->
+        <!-- Hard shadow behind scan card (wine color) -->
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/bg_hard_shadow_black"
-            android:translationX="8dp"
-            android:translationY="8dp"
+            android:background="@drawable/bg_abs_hard_shadow_wine"
+            android:translationX="12dp"
+            android:translationY="12dp"
+            android:importantForAccessibility="no"
             app:layout_constraintBottom_toBottomOf="@+id/card_container_idle"
             app:layout_constraintEnd_toEndOf="@+id/card_container_idle"
             app:layout_constraintStart_toStartOf="@+id/card_container_idle"
@@ -47,44 +56,47 @@
 
         <LinearLayout
             android:id="@+id/card_container_idle"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_idle_border_gradient"
+            android:background="@drawable/bg_abs_scan_card"
             android:orientation="vertical"
             android:padding="48dp"
+            android:gravity="center"
             app:layout_constraintBottom_toTopOf="@+id/badge_idle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_zb"
-            app:layout_constraintWidth_percent="0.8"
-            android:layout_marginBottom="24dp">
+            app:layout_constraintTop_toBottomOf="@+id/text_insert_id"
+            app:layout_constraintWidth_percent="0.78"
+            android:layout_marginBottom="28dp">
 
             <ImageView
-                android:layout_width="128dp"
-                android:layout_height="128dp"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_credit_card"
                 android:layout_marginBottom="24dp"
-                app:tint="@color/black" />
+                app:tint="@color/abs_coal" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:fontFamily="@font/space_mono_bold"
-                android:text="PLACE ID ON SCANNER"
-                android:textColor="@color/black"
-                android:textSize="24sp"
-                android:gravity="center" />
+                android:fontFamily="@font/space_mono"
+                android:text="INSERT OR SWIPE ID"
+                android:textColor="#0A0A0B"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:letterSpacing="0.12" />
         </LinearLayout>
 
-        <!-- Hard Shadow for Badge -->
+        <!-- Hard shadow behind badge (wine) -->
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/bg_badge_shadow_purple"
+            android:background="@drawable/bg_abs_hard_shadow_wine"
             android:translationX="6dp"
             android:translationY="6dp"
+            android:importantForAccessibility="no"
             app:layout_constraintBottom_toBottomOf="@+id/badge_idle"
             app:layout_constraintEnd_toEndOf="@+id/badge_idle"
             app:layout_constraintStart_toStartOf="@+id/badge_idle"
@@ -94,14 +106,14 @@
             android:id="@+id/badge_idle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_black"
+            android:background="@drawable/bg_abs_badge_dark"
             android:fontFamily="@font/space_mono"
             android:paddingHorizontal="32dp"
             android:paddingVertical="16dp"
             android:text="21+ VERIFICATION REQUIRED"
-            android:textColor="@color/white"
+            android:textColor="@color/abs_bone"
             android:textSize="14sp"
-            android:letterSpacing="0.1"
+            android:letterSpacing="0.18"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -123,27 +135,28 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/archivo_black"
             android:text="SCANNING"
-            android:textColor="@color/black"
-            android:textSize="80sp"
-            android:shadowColor="@color/black"
+            android:textColor="@color/abs_bone"
+            android:textSize="72sp"
+            android:shadowColor="@color/abs_black"
             android:shadowDx="6"
             android:shadowDy="6"
             android:shadowRadius="0.1"
+            android:letterSpacing="-0.01"
             app:layout_constraintBottom_toTopOf="@+id/card_container_scanning"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
-            android:layout_marginBottom="48dp" />
+            android:layout_marginBottom="32dp" />
 
-        <!-- Hard Shadow for Card -->
+        <!-- Hard shadow behind scan card (red) -->
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/bg_hard_shadow_black"
-            android:alpha="0.3"
-            android:translationX="10dp"
-            android:translationY="10dp"
+            android:background="@drawable/bg_abs_hard_shadow_red"
+            android:translationX="12dp"
+            android:translationY="12dp"
+            android:importantForAccessibility="no"
             app:layout_constraintBottom_toBottomOf="@+id/card_container_scanning"
             app:layout_constraintEnd_toEndOf="@+id/card_container_scanning"
             app:layout_constraintStart_toStartOf="@+id/card_container_scanning"
@@ -152,98 +165,98 @@
         <!-- Scanning Card -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/card_container_scanning"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_scanning_inner_gradient"
-            app:layout_constraintBottom_toTopOf="@+id/progress_container"
+            android:background="@drawable/bg_abs_scan_card"
+            android:minHeight="240dp"
+            app:layout_constraintBottom_toTopOf="@+id/text_scanning_hint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_scanning"
-            app:layout_constraintWidth_percent="0.8"
-            android:layout_marginBottom="32dp">
+            app:layout_constraintWidth_percent="0.78"
+            android:layout_marginBottom="28dp">
 
             <ImageView
-                android:layout_width="160dp"
-                android:layout_height="160dp"
-                android:layout_margin="64dp"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_margin="60dp"
                 android:src="@drawable/ic_credit_card_thick"
-                android:alpha="0.3"
-                app:tint="@color/black"
+                android:alpha="0.25"
+                app:tint="#0A0A0B"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Corner Accents -->
-            <!-- Top Left -->
+            <!-- Top Left corner accent -->
             <View
                 android:layout_width="48dp"
                 android:layout_height="4dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="32dp"
-                android:background="@color/black"
+                android:layout_marginStart="28dp"
+                android:layout_marginTop="28dp"
+                android:background="#0A0A0B"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
             <View
                 android:layout_width="4dp"
                 android:layout_height="48dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="32dp"
-                android:background="@color/black"
+                android:layout_marginStart="28dp"
+                android:layout_marginTop="28dp"
+                android:background="#0A0A0B"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Top Right -->
+            <!-- Top Right corner accent -->
             <View
                 android:layout_width="48dp"
                 android:layout_height="4dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginTop="32dp"
-                android:background="@color/black"
+                android:layout_marginEnd="28dp"
+                android:layout_marginTop="28dp"
+                android:background="#0A0A0B"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
             <View
                 android:layout_width="4dp"
                 android:layout_height="48dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginTop="32dp"
-                android:background="@color/black"
+                android:layout_marginEnd="28dp"
+                android:layout_marginTop="28dp"
+                android:background="#0A0A0B"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Bottom Left -->
+            <!-- Bottom Left corner accent -->
             <View
                 android:layout_width="48dp"
                 android:layout_height="4dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginBottom="32dp"
-                android:background="@color/black"
+                android:layout_marginStart="28dp"
+                android:layout_marginBottom="28dp"
+                android:background="#0A0A0B"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
             <View
                 android:layout_width="4dp"
                 android:layout_height="48dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginBottom="32dp"
-                android:background="@color/black"
+                android:layout_marginStart="28dp"
+                android:layout_marginBottom="28dp"
+                android:background="#0A0A0B"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
-            <!-- Bottom Right -->
+            <!-- Bottom Right corner accent -->
             <View
                 android:layout_width="48dp"
                 android:layout_height="4dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginBottom="32dp"
-                android:background="@color/black"
+                android:layout_marginEnd="28dp"
+                android:layout_marginBottom="28dp"
+                android:background="#0A0A0B"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
             <View
                 android:layout_width="4dp"
                 android:layout_height="48dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginBottom="32dp"
-                android:background="@color/black"
+                android:layout_marginEnd="28dp"
+                android:layout_marginBottom="28dp"
+                android:background="#0A0A0B"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -252,69 +265,42 @@
                 android:id="@+id/scanning_line"
                 android:layout_width="match_parent"
                 android:layout_height="4dp"
-                android:background="#99000000"
+                android:background="@color/abs_red"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Progress Section -->
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/bg_hard_shadow_black"
-            android:translationX="6dp"
-            android:translationY="6dp"
-            app:layout_constraintBottom_toBottomOf="@+id/progress_container"
-            app:layout_constraintEnd_toEndOf="@+id/progress_container"
-            app:layout_constraintStart_toStartOf="@+id/progress_container"
-            app:layout_constraintTop_toTopOf="@+id/progress_container" />
-
-        <FrameLayout
-            android:id="@+id/progress_container"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_hard_shadow_black"
-            android:padding="4dp"
-            app:layout_constraintBottom_toTopOf="@+id/text_progress"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_container_scanning"
-            app:layout_constraintWidth_percent="0.6">
-            
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:background="@drawable/bg_white_rounded_18dp"
-                android:padding="4dp">
-                
-                <!-- Need a custom rounded background for white inner part -->
-                <View
-                     android:id="@+id/progress_bar"
-                     android:layout_width="0dp"
-                     android:layout_height="match_parent"
-                     android:layout_weight="0"
-                     android:background="@drawable/bg_progress_gradient" />
-            </LinearLayout>
-        </FrameLayout>
-
         <TextView
-            android:id="@+id/text_progress"
+            android:id="@+id/text_scanning_hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:fontFamily="@font/space_mono"
-            android:text="0%"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:letterSpacing="0.1"
+            android:text="INSERT OR SWIPE ID"
+            android:textColor="@color/abs_fog"
+            android:textSize="14sp"
+            android:letterSpacing="0.20"
+            android:textAllCaps="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/progress_container" />
+            app:layout_constraintTop_toBottomOf="@+id/card_container_scanning" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Back Button (always visible, overlays all states) -->
+    <ImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_margin="32dp"
+        android:background="@drawable/bg_back_button"
+        android:src="@drawable/ic_arrow_back"
+        android:tint="#0A0A0B"
+        android:contentDescription="Go back"
+        android:elevation="8dp" />
 
     <!-- SUCCESS STATE -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -324,13 +310,14 @@
         android:padding="24dp"
         android:visibility="gone">
 
-        <!-- Check Card -->
+        <!-- Hard shadow behind success card (green) -->
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/bg_hard_shadow_black"
+            android:background="@drawable/bg_abs_hard_shadow_green"
             android:translationX="12dp"
             android:translationY="12dp"
+            android:importantForAccessibility="no"
             app:layout_constraintBottom_toBottomOf="@+id/card_container_success"
             app:layout_constraintEnd_toEndOf="@+id/card_container_success"
             app:layout_constraintStart_toStartOf="@+id/card_container_success"
@@ -340,7 +327,7 @@
             android:id="@+id/card_container_success"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_success_border_gradient"
+            android:background="@drawable/bg_abs_scan_card"
             android:orientation="vertical"
             android:padding="48dp"
             app:layout_constraintBottom_toTopOf="@+id/text_verified"
@@ -351,10 +338,10 @@
             android:layout_marginBottom="32dp">
 
             <ImageView
-                android:layout_width="160dp"
-                android:layout_height="160dp"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
                 android:src="@drawable/ic_check_circle_thick"
-                app:tint="@color/anim_green_500" />
+                app:tint="@color/abs_green_ok" />
         </LinearLayout>
 
         <TextView
@@ -363,9 +350,9 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/archivo_black"
             android:text="VERIFIED"
-            android:textColor="@color/black"
-            android:textSize="100sp"
-            android:shadowColor="#6622C55E"
+            android:textColor="@color/abs_bone"
+            android:textSize="80sp"
+            android:shadowColor="#661B5E20"
             android:shadowDx="8"
             android:shadowDy="8"
             android:shadowRadius="0.1"
@@ -375,13 +362,14 @@
             app:layout_constraintTop_toBottomOf="@+id/card_container_success"
             android:layout_marginBottom="24dp" />
 
-        <!-- Badge Shadow -->
+        <!-- Badge shadow (green) -->
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/bg_badge_shadow_green"
-            android:translationX="8dp"
-            android:translationY="8dp"
+            android:background="@drawable/bg_abs_hard_shadow_green"
+            android:translationX="6dp"
+            android:translationY="6dp"
+            android:importantForAccessibility="no"
             app:layout_constraintBottom_toBottomOf="@+id/badge_success"
             app:layout_constraintEnd_toEndOf="@+id/badge_success"
             app:layout_constraintStart_toStartOf="@+id/badge_success"
@@ -391,13 +379,15 @@
             android:id="@+id/badge_success"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_black"
+            android:background="@drawable/bg_abs_badge_green"
             android:fontFamily="@font/archivo_black"
             android:paddingHorizontal="48dp"
-            android:paddingVertical="24dp"
+            android:paddingVertical="20dp"
             android:text="AGE CONFIRMED"
-            android:textColor="@color/white"
-            android:textSize="28sp"
+            android:textColor="@color/abs_bone"
+            android:textSize="22sp"
+            android:letterSpacing="0.04"
+            android:textAllCaps="true"
             app:layout_constraintBottom_toTopOf="@+id/text_continue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -410,10 +400,10 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/space_mono"
             android:text="CONTINUE TO CHECKOUT"
-            android:textColor="@color/black"
+            android:textColor="@color/abs_fog"
             android:textSize="14sp"
-            android:alpha="0.6"
-            android:letterSpacing="0.2"
+            android:letterSpacing="0.20"
+            android:textAllCaps="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

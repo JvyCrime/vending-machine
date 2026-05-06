@@ -42,6 +42,12 @@
         
         <activity android:name=".ProductDetailActivity" />
         <activity android:name=".IdScanActivity" />
+        <activity android:name=".CheckoutActivity" />
+        <activity
+            android:name=".IdleActivity"
+            android:noHistory="true"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize" />
         
         <service
             android:name=".hardware.HardwareService"

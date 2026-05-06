@@ -89,6 +89,19 @@
     <color name="violet_400">#a78bfa</color>
     <color name="violet_300">#c4b5fd</color>
 
+    <!-- ABS Vending Services Brand Palette -->
+    <color name="abs_black">#000000</color>
+    <color name="abs_coal">#141416</color>
+    <color name="abs_bone">#F5F1EA</color>
+    <color name="abs_wine_500">#A82342</color>
+    <color name="abs_wine_700">#6E1428</color>
+    <color name="abs_red">#CC0000</color>
+    <color name="abs_ash">#6E6A63</color>
+    <color name="abs_fog">#BFB8AD</color>
+    <color name="abs_green_ok">#22C55E</color>
+    <color name="abs_green_dark">#1B5E20</color>
+    <color name="abs_green_total">#4ADE80</color>
+
     <!-- Orb Colors (with opacity variants if needed, though Alpha will be handled in gradient/view) -->
     <!-- Sun -->
     <color name="sun_core">#99FDE047</color> <!-- Yellow 300 ~60% -->

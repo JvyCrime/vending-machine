@@ -15,72 +15,49 @@ data class Product(
     val row: String,
     val col: String,
     val imageRes: Int,
-    val backgroundRes: Int = R.drawable.bg_card_gradient,
+    val backgroundRes: Int = R.drawable.bg_abs_pcard,
     val isDigital: Boolean = false,
     val price: Double = 0.0,
     val ageRestriction: Int? = null,
-    val scaleX: Float = 1.71f,
-    val scaleY: Float = 1.76f,
+    val scaleX: Float = 1f,
+    val scaleY: Float = 1f,
     val videoFileName: String? = null,
     val category: String = "General"
 )
 
 class ProductAdapter(
-    private val products: List<Product>,
+    private var products: List<Product>,
     private val onProductClick: (Product) -> Unit
 ) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
+    fun updateProducts(newList: List<Product>) {
+        products = newList
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
-        // Inflate the new card layout
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_product_card, parent, false)
         return ProductViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
-        val product = products[position]
-        holder.bind(product, onProductClick)
+        holder.bind(products[position], onProductClick)
     }
 
     override fun getItemCount(): Int = products.size
 
     class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // Bind to the new views in item_product_card.xml
-        private val headerText: TextView = itemView.findViewById(R.id.headerText)
-        private val imgProduct: ImageView = itemView.findViewById(R.id.productImage)
-        private val tvDescription: TextView = itemView.findViewById(R.id.productDescription)
-        private val tvPrice: TextView = itemView.findViewById(R.id.productPrice)
+        private val brand: TextView    = itemView.findViewById(R.id.pcard_brand)
+        private val image: ImageView   = itemView.findViewById(R.id.productImage)
+        private val name: TextView     = itemView.findViewById(R.id.productDescription)
+        private val price: TextView    = itemView.findViewById(R.id.productPrice)
 
         fun bind(product: Product, onClick: (Product) -> Unit) {
-            // Set static header or dynamic if needed (Design has "zb")
-            headerText.text = "zb"
-
-            // Set background
-            // The background is on the first child ConstraintLayout inside the CardView
-            // Let's access it. The layout hierarchy is MaterialCardView -> ConstraintLayout -> ...
-            // We can find the ConstraintLayout by finding its children or by ID if we added one.
-            // In item_product_card.xml, the first child constraint layout doesn't have an ID. 
-            // But we can set it on the parent if we moved the background there, or traverse.
-            // Better yet, let's assume the background is set on a specific view.
-            // In the updated layout, line 16 of item_product_card.xml:
-            // <androidx.constraintlayout.widget.ConstraintLayout ... android:background="@drawable/bg_card_gradient">
-            // We need to set the background of *that* view.
-            // Let's assume we will add an ID to it.
-            val bgContainer = itemView.findViewById<View>(R.id.backgroundContainer)
-            bgContainer?.setBackgroundResource(product.backgroundRes)
-
-            // Set product name as description
-            tvDescription.text = product.name
-
-            // Format and set price
-            val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
-            tvPrice.text = currencyFormat.format(product.price)
-
-            // Load product image
-            imgProduct.setImageResource(product.imageRes)
-            imgProduct.scaleX = product.scaleX
-            imgProduct.scaleY = product.scaleY
-            
+            brand.text = product.category
+            name.text  = product.name
+            price.text = NumberFormat.getCurrencyInstance(Locale.US).format(product.price)
+            image.setImageResource(product.imageRes)
             itemView.setOnClickListener { onClick(product) }
         }
     }

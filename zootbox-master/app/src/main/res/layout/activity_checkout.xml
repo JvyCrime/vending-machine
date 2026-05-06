@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/abs_black">
+
+    <!-- Watercolor atmosphere -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_abs_watercolor"
+        android:importantForAccessibility="no"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Back / cancel top-left with hard shadow -->
+    <View
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="34dp"
+        android:background="@drawable/bg_hard_shadow_black"
+        android:importantForAccessibility="no"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/bg_back_button"
+        android:src="@drawable/ic_arrow_back"
+        android:tint="#0A0A0B"
+        android:contentDescription="Cancel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Screen title -->
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:text="CHECKOUT"
+        android:textColor="@color/abs_bone"
+        android:textSize="28sp"
+        android:fontFamily="@font/archivo_black"
+        android:letterSpacing="0.12"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Order summary card -->
+    <LinearLayout
+        android:id="@+id/card_order_summary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="24dp"
+        android:orientation="vertical"
+        android:padding="28dp"
+        android:background="@drawable/bg_abs_coal_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_title">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ORDER SUMMARY"
+            android:textColor="@color/abs_ash"
+            android:textSize="11sp"
+            android:fontFamily="@font/space_mono"
+            android:letterSpacing="0.20"
+            android:textAllCaps="true" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#29F5F1EA" />
+
+        <TextView
+            android:id="@+id/text_product_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Product"
+            android:textColor="@color/abs_bone"
+            android:textSize="22sp"
+            android:fontFamily="@font/archivo_black"
+            android:textAllCaps="false" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/text_qty_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Qty: 1"
+                android:textColor="@color/abs_fog"
+                android:textSize="13sp"
+                android:fontFamily="@font/space_mono"
+                android:letterSpacing="0.12"
+                android:textAllCaps="true" />
+
+            <TextView
+                android:id="@+id/text_unit_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$0.00 each"
+                android:textColor="@color/abs_fog"
+                android:textSize="13sp"
+                android:fontFamily="@font/space_mono"
+                android:letterSpacing="0.12"
+                android:textAllCaps="true" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#29F5F1EA" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TOTAL DUE"
+                android:textColor="@color/abs_bone"
+                android:textSize="16sp"
+                android:fontFamily="@font/archivo_black"
+                android:textAllCaps="true"
+                android:letterSpacing="0.06" />
+
+            <TextView
+                android:id="@+id/text_total_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$0.00"
+                android:textColor="@color/abs_green_total"
+                android:textSize="40sp"
+                android:fontFamily="@font/archivo_black" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Payment instructions card -->
+    <LinearLayout
+        android:id="@+id/card_payment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="28dp"
+        android:paddingVertical="36dp"
+        android:background="@drawable/bg_abs_coal_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_order_summary">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TAP  •  INSERT  •  SWIPE"
+            android:textColor="@color/abs_bone"
+            android:textSize="24sp"
+            android:fontFamily="@font/archivo_black"
+            android:letterSpacing="0.06"
+            android:gravity="center"
+            android:textAllCaps="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Use the card reader below to complete your purchase"
+            android:textColor="@color/abs_fog"
+            android:textSize="15sp"
+            android:fontFamily="@font/inter"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/text_awaiting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Awaiting payment…"
+            android:textColor="@color/abs_green_total"
+            android:textSize="13sp"
+            android:fontFamily="@font/space_mono"
+            android:letterSpacing="0.14"
+            android:textAllCaps="true"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+    <!-- Session countdown -->
+    <TextView
+        android:id="@+id/text_countdown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Session expires in 60s"
+        android:textColor="@color/abs_ash"
+        android:textSize="14sp"
+        android:fontFamily="@font/space_mono"
+        android:letterSpacing="0.14"
+        android:textAllCaps="true"
+        app:layout_constraintBottom_toTopOf="@id/btn_cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Cancel button with hard shadow -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="72dp"
+        android:layout_marginHorizontal="26dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/bg_hard_shadow_black"
+        android:importantForAccessibility="no"
+        android:translationX="6dp"
+        android:translationY="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="0dp"
+        android:layout_height="72dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="32dp"
+        android:text="CANCEL"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:fontFamily="@font/archivo_black"
+        android:letterSpacing="0.12"
+        android:textAllCaps="true"
+        android:background="@drawable/bg_abs_primary_btn"
+        android:elevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,8 +5,10 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.os.Binder
@@ -19,6 +21,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class HardwareService : Service() {
     private val binder = LocalBinder()
@@ -27,18 +31,36 @@ class HardwareService : Service() {
     private lateinit var usbManager: UsbManager
     private var idScannerManager: IdScannerManager? = null
     private var nayaxPaymentManager: NayaxPaymentManager? = null
+
+    private val _idScannerManagerFlow = MutableStateFlow<IdScannerManager?>(null)
+    val idScannerManagerFlow: StateFlow<IdScannerManager?> = _idScannerManagerFlow
     
     companion object {
         private const val CHANNEL_ID = "HardwareServiceChannel"
         private const val NOTIFICATION_ID = 1
-        
+        private const val ACTION_USB_PERMISSION = "com.example.myapplication.USB_PERMISSION"
+
         // USB Vendor/Product IDs from hardware analysis
         const val ID_SCANNER_VID = 0x0403
         const val ID_SCANNER_PID = 0x6001
         const val NAYAX_VID = 0x26f1
         const val NAYAX_PID = 0x5650
         const val NAYAX_TTY_ACM = "/dev/ttyACM0"
-        const val SERIAL_BAUD_RATE = 115200
+        const val SERIAL_BAUD_RATE = 9600
+    }
+
+    private val usbPermissionReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action != ACTION_USB_PERMISSION) return
+            val device: UsbDevice? = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
+            val granted = intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
+            if (granted && device != null &&
+                device.vendorId == ID_SCANNER_VID && device.productId == ID_SCANNER_PID) {
+                idScannerManager = IdScannerManager(usbManager, device, serviceScope)
+                _idScannerManagerFlow.value = idScannerManager
+                idScannerManager?.initialize()
+            }
+        }
     }
     
     inner class LocalBinder : Binder() {
@@ -50,6 +72,13 @@ class HardwareService : Service() {
         usbManager = getSystemService(Context.USB_SERVICE) as UsbManager
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, createNotification())
+        val filter = IntentFilter(ACTION_USB_PERMISSION)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(usbPermissionReceiver, filter, RECEIVER_NOT_EXPORTED)
+        } else {
+            @Suppress("UnspecifiedRegisterReceiverFlag")
+            registerReceiver(usbPermissionReceiver, filter)
+        }
         initializeHardware()
     }
     
@@ -57,6 +86,7 @@ class HardwareService : Service() {
     
     override fun onDestroy() {
         super.onDestroy()
+        unregisterReceiver(usbPermissionReceiver)
         idScannerManager?.close()
         nayaxPaymentManager?.close()
         serviceScope.cancel()
@@ -92,22 +122,21 @@ class HardwareService : Service() {
     }
     
     private fun initializeHardware() {
-        // HARDWARE DISABLED FOR FRONTEND DEVELOPMENT
-        /*
-        // Initialize ID Scanner (E-Seek M260)
         val idScannerDevice = findUsbDevice(ID_SCANNER_VID, ID_SCANNER_PID)
         if (idScannerDevice != null) {
-            idScannerManager = IdScannerManager(usbManager, idScannerDevice, serviceScope)
-            idScannerManager?.initialize()
+            if (usbManager.hasPermission(idScannerDevice)) {
+                idScannerManager = IdScannerManager(usbManager, idScannerDevice, serviceScope)
+                _idScannerManagerFlow.value = idScannerManager
+                idScannerManager?.initialize()
+            } else {
+                val permissionIntent = PendingIntent.getBroadcast(
+                    this, 0,
+                    Intent(ACTION_USB_PERMISSION),
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+                usbManager.requestPermission(idScannerDevice, permissionIntent)
+            }
         }
-        
-        // Initialize Nayax Payment Reader
-        val nayaxDevice = findUsbDevice(NAYAX_VID, NAYAX_PID)
-        if (nayaxDevice != null) {
-            nayaxPaymentManager = NayaxPaymentManager(usbManager, nayaxDevice, NAYAX_TTY_ACM, serviceScope)
-            nayaxPaymentManager?.initialize()
-        }
-        */
     }
     
     private fun findUsbDevice(vid: Int, pid: Int): UsbDevice? {
