@@ -26,6 +26,11 @@ abstract class KioskActivity : AppCompatActivity() {
         enterImmersiveMode()
     }
 
+    @Deprecated("Overridden for kiosk lockdown")
+    override fun onBackPressed() {
+        // Kiosk mode: customers navigate via on-screen buttons only.
+    }
+
     private fun enterImmersiveMode() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             WindowCompat.setDecorFitsSystemWindows(window, false)

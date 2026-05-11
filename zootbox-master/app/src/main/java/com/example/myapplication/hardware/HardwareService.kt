@@ -34,7 +34,10 @@ class HardwareService : Service() {
 
     private val _idScannerManagerFlow = MutableStateFlow<IdScannerManager?>(null)
     val idScannerManagerFlow: StateFlow<IdScannerManager?> = _idScannerManagerFlow
-    
+
+    private val _nayaxPaymentManagerFlow = MutableStateFlow<NayaxPaymentManager?>(null)
+    val nayaxPaymentManagerFlow: StateFlow<NayaxPaymentManager?> = _nayaxPaymentManagerFlow
+
     companion object {
         private const val CHANNEL_ID = "HardwareServiceChannel"
         private const val NOTIFICATION_ID = 1
@@ -54,15 +57,49 @@ class HardwareService : Service() {
             if (intent.action != ACTION_USB_PERMISSION) return
             val device: UsbDevice? = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
             val granted = intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
-            if (granted && device != null &&
-                device.vendorId == ID_SCANNER_VID && device.productId == ID_SCANNER_PID) {
+            if (!granted || device == null) return
+
+            if (device.vendorId == ID_SCANNER_VID && device.productId == ID_SCANNER_PID) {
                 idScannerManager = IdScannerManager(usbManager, device, serviceScope)
                 _idScannerManagerFlow.value = idScannerManager
                 idScannerManager?.initialize()
             }
+
+            if (device.vendorId == NAYAX_VID && device.productId == NAYAX_PID) {
+                nayaxPaymentManager = NayaxPaymentManager(usbManager, device, serviceScope)
+                _nayaxPaymentManagerFlow.value = nayaxPaymentManager
+                nayaxPaymentManager?.initialize()
+            }
         }
     }
-    
+
+    private val usbDeviceReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val device: UsbDevice? = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
+            when (intent.action) {
+                UsbManager.ACTION_USB_DEVICE_ATTACHED -> {
+                    if (device != null &&
+                        ((device.vendorId == ID_SCANNER_VID && device.productId == ID_SCANNER_PID) ||
+                         (device.vendorId == NAYAX_VID      && device.productId == NAYAX_PID))) {
+                        initializeHardware()
+                    }
+                }
+                UsbManager.ACTION_USB_DEVICE_DETACHED -> {
+                    if (device?.vendorId == ID_SCANNER_VID && device?.productId == ID_SCANNER_PID) {
+                        idScannerManager?.close()
+                        idScannerManager = null
+                        _idScannerManagerFlow.value = null
+                    }
+                    if (device?.vendorId == NAYAX_VID && device?.productId == NAYAX_PID) {
+                        nayaxPaymentManager?.close()
+                        nayaxPaymentManager = null
+                        _nayaxPaymentManagerFlow.value = null
+                    }
+                }
+            }
+        }
+    }
+
     inner class LocalBinder : Binder() {
         fun getService(): HardwareService = this@HardwareService
     }
@@ -72,12 +109,22 @@ class HardwareService : Service() {
         usbManager = getSystemService(Context.USB_SERVICE) as UsbManager
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, createNotification())
-        val filter = IntentFilter(ACTION_USB_PERMISSION)
+        val permFilter = IntentFilter(ACTION_USB_PERMISSION)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(usbPermissionReceiver, filter, RECEIVER_NOT_EXPORTED)
+            registerReceiver(usbPermissionReceiver, permFilter, RECEIVER_NOT_EXPORTED)
         } else {
             @Suppress("UnspecifiedRegisterReceiverFlag")
-            registerReceiver(usbPermissionReceiver, filter)
+            registerReceiver(usbPermissionReceiver, permFilter)
+        }
+        val deviceFilter = IntentFilter().apply {
+            addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED)
+            addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(usbDeviceReceiver, deviceFilter, RECEIVER_NOT_EXPORTED)
+        } else {
+            @Suppress("UnspecifiedRegisterReceiverFlag")
+            registerReceiver(usbDeviceReceiver, deviceFilter)
         }
         initializeHardware()
     }
@@ -87,6 +134,7 @@ class HardwareService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(usbPermissionReceiver)
+        unregisterReceiver(usbDeviceReceiver)
         idScannerManager?.close()
         nayaxPaymentManager?.close()
         serviceScope.cancel()
@@ -122,6 +170,7 @@ class HardwareService : Service() {
     }
     
     private fun initializeHardware() {
+        // ID Scanner
         val idScannerDevice = findUsbDevice(ID_SCANNER_VID, ID_SCANNER_PID)
         if (idScannerDevice != null) {
             if (usbManager.hasPermission(idScannerDevice)) {
@@ -135,6 +184,23 @@ class HardwareService : Service() {
                     PendingIntent.FLAG_IMMUTABLE
                 )
                 usbManager.requestPermission(idScannerDevice, permissionIntent)
+            }
+        }
+
+        // Nayax payment reader
+        val nayaxDevice = findUsbDevice(NAYAX_VID, NAYAX_PID)
+        if (nayaxDevice != null) {
+            if (usbManager.hasPermission(nayaxDevice)) {
+                nayaxPaymentManager = NayaxPaymentManager(usbManager, nayaxDevice, serviceScope)
+                _nayaxPaymentManagerFlow.value = nayaxPaymentManager
+                nayaxPaymentManager?.initialize()
+            } else {
+                val permissionIntent = PendingIntent.getBroadcast(
+                    this, 1,
+                    Intent(ACTION_USB_PERMISSION),
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+                usbManager.requestPermission(nayaxDevice, permissionIntent)
             }
         }
     }

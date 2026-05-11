@@ -18,9 +18,6 @@ import kotlinx.coroutines.launch
 
 class IdleActivity : KioskActivity() {
 
-    private companion object {
-        const val AD_INTERVAL_MS = 5_000L   // time each ad slide is shown (ms)
-    }
 
     private lateinit var viewFlipper: ViewFlipper
     private lateinit var dotContainer: LinearLayout
@@ -28,92 +25,64 @@ class IdleActivity : KioskActivity() {
 
     // ─────────────────────────────────────────────────────────────────────────────
     // AD SLIDES — 6 placeholder slides. Slots 1–5 are brand ad slots; slot 6 is
-    // an ABS house ad held as an open slot for a future brand partner.
-    //
-    // For each slot, look for the "TODO:" comment block — it tells you exactly
-    // which fields to update and what ad asset to add when you're ready.
+    // an ABS house ad held as a contact info for future prospects.
     // ─────────────────────────────────────────────────────────────────────────────
     private val ads = listOf(
 
         // ── SLOT 1 — Fume Ultra ──────────────────────────────────────────────────
-        // TODO: Replace this placeholder with the final Fume Ultra ad creative.
-        //   • bgColor    → Change to the brand's official background hex (or use a gradient
-        //                  drawable on the slide root instead of a solid color).
-        //   • imageRes   → Add your ad image to res/drawable/ and reference it here.
-        //                  Recommended: R.drawable.ad_fume_ultra_banner
-        //                  Ideal format: transparent-background PNG or square WebP, 400×400+.
-        //   • adTitle    → Update to the final headline approved for this campaign.
-        //   • adSubtitle → Update to the final tagline or offer copy.
-        //   • badgeText  → Short promo label: "NEW FLAVOR", "LIMITED TIME", etc.
         AdSlide(
             bgColor    = "#0D1B2A",
-            adTitle    = "FUME ULTRA 2500",
-            adSubtitle = "2500 Puffs · Available Now",
-            badgeText  = "IN STOCK",
-            imageRes   = R.drawable.img_fume_ultra_strawberry_banana
+            adTitle    = "BLACK & MILD",
+            adSubtitle = "Pipe Tobacco Experience · 5 Pack",
+            badgeText  = "BEST SELLER",
+            imageRes   = R.drawable.black_mild
         ),
 
         // ── SLOT 2 — Lost Mary ───────────────────────────────────────────────────
-        // TODO: Replace this placeholder with the final Lost Mary / NERA ad creative.
-        //   • imageRes   → Recommended: R.drawable.ad_lost_mary_banner
-        //   • Same field notes as Slot 1 above.
         AdSlide(
             bgColor    = "#1A0524",
             adTitle    = "LOST MARY NERA 70K",
             adSubtitle = "70,000 Puffs · Long-Lasting",
             badgeText  = "NEW ARRIVAL",
-            imageRes   = R.drawable.img_lost_mary
+            imageRes   = R.drawable.lost_mary
         ),
 
         // ── SLOT 3 — ZYN ─────────────────────────────────────────────────────────
-        // TODO: Replace this placeholder with the final ZYN ad creative.
-        //   • imageRes   → Recommended: R.drawable.ad_zyn_banner
-        //   • Tip: You can rotate flavors here; change adTitle/adSubtitle to highlight
-        //     a specific ZYN variant (e.g. "ZYN CITRUS 6MG" or "ZYN COOL MINT").
         AdSlide(
             bgColor    = "#0A2420",
             adTitle    = "ZYN NICOTINE POUCHES",
-            adSubtitle = "Tobacco-Free · 15 Count",
-            badgeText  = "TOBACCO FREE",
-            imageRes   = R.drawable.img_zyn_citrus_6mg
+            adSubtitle = "Smoke-Free · 15 Count",
+            badgeText  = "SMOKE FREE",
+            imageRes   = R.drawable.img_zyn_wintergreen_6mg
         ),
 
         // ── SLOT 4 — RAZ ─────────────────────────────────────────────────────────
-        // TODO: Replace this placeholder with the final RAZ ad creative.
-        //   • imageRes → Recommended: R.drawable.ad_raz_banner
-        //   • Same field notes as Slot 1 above.
         AdSlide(
             bgColor    = "#1A0810",
             adTitle    = "RAZ 25K LTX",
             adSubtitle = "25,000 Puffs · Smooth Draw",
             badgeText  = "POPULAR PICK",
-            imageRes   = R.drawable.img_raz
+            imageRes   = R.drawable.raz
         ),
 
         // ── SLOT 5 — Geek Bar ────────────────────────────────────────────────────
-        // TODO: Replace this placeholder with the final Geek Bar Pulse X ad creative.
-        //   • imageRes → Recommended: R.drawable.ad_geek_bar_banner
-        //   • Same field notes as Slot 1 above.
         AdSlide(
             bgColor    = "#141416",
             adTitle    = "GEEK BAR PULSE X 40K",
             adSubtitle = "40,000 Puffs · Ultimate Power",
             badgeText  = "BEST SELLER",
-            imageRes   = R.drawable.img_geek_bar
+            imageRes   = R.drawable.geek_bar
         ),
 
-        // ── SLOT 6 — OPEN SLOT (ABS house ad) ───────────────────────────────────
-        // This slide is intentionally left as an ABS Vending Services house ad
-        // until a 6th brand partner is confirmed. When you're ready to add a new ad:
-        //   1. Update bgColor, adTitle, adSubtitle, and badgeText below.
-        //   2. Add a dedicated ad image to res/drawable/ and set imageRes.
-        //   3. Remove this comment block.
+        // ── SLOT 6 — Advertise With Us ───────────────────────────────────────────
         AdSlide(
             bgColor    = "#0A0A0B",
-            adTitle    = "ABS VENDING SERVICES",
-            adSubtitle = "Premium Products · Always Fresh",
-            badgeText  = "ABS",
-            imageRes   = null   // no image for the house ad; text-only is intentional
+            adTitle    = "WANT YOUR BRAND ON THIS SCREEN?",
+            adSubtitle = "(727) 307-4615\ncontact.absvendingservices@gmail.com",
+            badgeText  = "ADVERTISE WITH US",
+            imageRes   = R.drawable.absqrcode,
+            durationMs = 10_000L,
+            layoutRes  = R.layout.item_ad_slide_contact
         )
     )
 
@@ -150,7 +119,7 @@ class IdleActivity : KioskActivity() {
     private fun inflateSlides() {
         val inflater = LayoutInflater.from(this)
         ads.forEach { ad ->
-            val slide = inflater.inflate(R.layout.item_ad_slide, viewFlipper, false)
+            val slide = inflater.inflate(ad.layoutRes, viewFlipper, false)
             slide.setBackgroundColor(Color.parseColor(ad.bgColor))
             slide.findViewById<TextView>(R.id.tv_badge).text = ad.badgeText
             slide.findViewById<TextView>(R.id.tv_ad_title).text = ad.adTitle
@@ -196,12 +165,12 @@ class IdleActivity : KioskActivity() {
         }
     }
 
-    // Advances the carousel and syncs the dot indicator every AD_INTERVAL_MS.
+    // Advances the carousel using each slide's own durationMs before moving to the next.
     private fun startAutoAdvance() {
         autoAdvanceJob?.cancel()
         autoAdvanceJob = lifecycleScope.launch {
             while (true) {
-                delay(AD_INTERVAL_MS)
+                delay(ads[viewFlipper.displayedChild].durationMs)
                 val next = (viewFlipper.displayedChild + 1) % ads.size
                 viewFlipper.displayedChild = next
                 updateDots(next)

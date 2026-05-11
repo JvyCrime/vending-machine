@@ -20,8 +20,8 @@ import java.util.Locale
 class MainActivity : KioskActivity() {
 
     private companion object {
-        // How long the screen must be idle before the ad carousel launches (2 minutes).
-        const val IDLE_TIMEOUT_MS = 120_000L
+        // How long the screen must be idle before the ad carousel launches (45 seconds).
+        const val IDLE_TIMEOUT_MS = 45_000L
     }
 
     private lateinit var productRecycler: RecyclerView
@@ -35,17 +35,16 @@ class MainActivity : KioskActivity() {
     }
 
     private val allProducts = listOf(
-        Product("01", "FUME ULTRA 2500",     "1", "1", R.drawable.img_fume_ultra_strawberry_banana, price = 16.99, ageRestriction = 21, videoFileName = "fume_ultra.mp4",  category = "VAPES"),
-        Product("02", "LOST MARY NERA 70K",  "1", "2", R.drawable.img_lost_mary,                   price = 24.99, ageRestriction = 21, videoFileName = "lost_mary.mp4",   category = "VAPES"),
-        Product("03", "OFF STAMP CUBE KIT",  "1", "3", R.drawable.img_off_stamp_black_mint,         price = 17.99, ageRestriction = 21, videoFileName = "off_stamp.mp4",   category = "VAPES"),
-        Product("04", "RAZ 25K LTX",         "1", "4", R.drawable.img_raz,                          price = 19.99, ageRestriction = 21, videoFileName = "raz.mp4",         category = "VAPES"),
-        Product("05", "GEEK BAR PULSE X 40K","1", "5", R.drawable.img_geek_bar,                     price = 21.99, ageRestriction = 21, videoFileName = "geek_bar.mp4",    category = "VAPES"),
-        Product("06", "ZYN CITRUS 6MG",      "2", "1", R.drawable.img_zyn_citrus_6mg,               price = 8.99,  ageRestriction = 21, videoFileName = "zyn_citrus.mp4",  category = "POUCHES"),
-        Product("07", "ZYN COOL MINT 6MG",   "2", "2", R.drawable.img_zyn_cool_mint_6mg,            price = 8.99,  ageRestriction = 21, videoFileName = "zyn_cool_mint.mp4",category = "POUCHES"),
-        Product("08", "ZYN WINTERGREEN 6MG", "2", "3", R.drawable.img_zyn_wintergreen_6mg,          price = 8.99,  ageRestriction = 21, videoFileName = "zyn_wintergreen.mp4",category = "POUCHES"),
-        Product("09", "ZYN SPEARMINT 3MG",   "2", "4", R.drawable.img_zyn_spearmint_3mg,            price = 8.99,  ageRestriction = 21, videoFileName = "zyn_spearmint.mp4",category = "POUCHES"),
-        Product("10", "ZYN PEPPERMINT 3MG",  "2", "5", R.drawable.img_zyn_peppermint_3mg,           price = 8.99,  ageRestriction = 21, videoFileName = "zyn_peppermint.mp4",category = "POUCHES"),
-        Product("11", "NEWPORTS",            "3", "1", R.drawable.img_newport,                      price = 13.99, ageRestriction = 21, videoFileName = "newports.mp4",    category = "CIGARETTES")
+        Product("01", "FUME ULTRA 2500",     "1", "1", R.drawable.fume,                         price = 16.99, ageRestriction = 21, videoFileName = "fume_ultra.mp4",      category = "VAPES"),
+        Product("02", "LOST MARY NERA 70K",  "1", "2", R.drawable.lost_mary,                    price = 24.99, ageRestriction = 21, videoFileName = "lost_mary.mp4",       category = "VAPES"),
+        Product("03", "OFF STAMP CUBE KIT",  "1", "3", R.drawable.off_stamp,                    price = 17.99, ageRestriction = 21, videoFileName = "off_stamp.mp4",       category = "VAPES"),
+        Product("04", "RAZ 25K LTX",         "1", "4", R.drawable.raz,                          price = 19.99, ageRestriction = 21, videoFileName = "raz.mp4",             category = "VAPES"),
+        Product("05", "GEEK BAR PULSE X 40K","1", "5", R.drawable.geek_bar,                     price = 21.99, ageRestriction = 21, videoFileName = "geek_bar.mp4",        category = "VAPES"),
+        Product("06", "ZYN CITRUS 6MG",      "2", "1", R.drawable.img_zyn_citrus_6mg,           price = 8.99,  ageRestriction = 21, videoFileName = "zyn_citrus.mp4",      category = "POUCHES"),
+        Product("07", "ZYN WINTERGREEN 6MG", "2", "2", R.drawable.img_zyn_wintergreen_6mg,      price = 8.99,  ageRestriction = 21, videoFileName = "zyn_wintergreen.mp4", category = "POUCHES"),
+        Product("08", "ZYN PEPPERMINT 3MG",  "2", "3", R.drawable.img_zyn_peppermint_3mg,       price = 8.99,  ageRestriction = 21, videoFileName = "zyn_peppermint.mp4",  category = "POUCHES"),
+        Product("09", "NEWPORTS",            "3", "1", R.drawable.newport,                      price = 13.99, ageRestriction = 21, videoFileName = "newports.mp4",        category = "CIGARETTES"),
+        Product("10", "BLACK & MILD",        "3", "2", R.drawable.black_mild,                   price = 7.99,  ageRestriction = 21, videoFileName = "black_mild.mp4",      category = "CIGARETTES"),
     )
 
     private lateinit var adapter: ProductAdapter

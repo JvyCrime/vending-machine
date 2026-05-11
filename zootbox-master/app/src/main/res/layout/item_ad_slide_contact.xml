@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Background color set programmatically from AdSlide.bgColor -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingHorizontal="48dp">
+
+        <!-- ABS logo wordmark -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ABS"
+            android:textSize="64sp"
+            android:textColor="@color/abs_bone"
+            android:fontFamily="@font/ancient_medium"
+            android:letterSpacing="0.08" />
+
+        <!-- VENDING SERVICES in Back in the USSR font, sits just under ABS -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="VENDING SERVICES"
+            android:textSize="15sp"
+            android:textColor="@color/abs_fog"
+            android:fontFamily="@font/back_in_the_ussr_dl_k"
+            android:letterSpacing="0.20"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="20dp" />
+
+        <!-- QR code — scan to get in contact -->
+        <ImageView
+            android:id="@+id/iv_ad_image"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:scaleType="centerInside"
+            android:layout_marginBottom="18dp" />
+
+        <!-- Badge pill -->
+        <TextView
+            android:id="@+id/tv_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="5dp"
+            android:textSize="11sp"
+            android:letterSpacing="0.12"
+            android:textColor="@color/abs_fog"
+            android:fontFamily="@font/archivo_black"
+            android:background="@drawable/bg_abs_badge_dark"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Headline -->
+        <TextView
+            android:id="@+id/tv_ad_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:lineSpacingMultiplier="0.95"
+            android:textColor="@color/abs_bone"
+            android:fontFamily="@font/archivo_black"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Phone + email (two lines via \n in AdSlide.adSubtitle) -->
+        <TextView
+            android:id="@+id/tv_ad_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:lineSpacingMultiplier="1.4"
+            android:textColor="@color/abs_fog"
+            android:fontFamily="@font/archivo_black" />
+
+    </LinearLayout>
+
+</FrameLayout>

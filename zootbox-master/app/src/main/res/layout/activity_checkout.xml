@@ -213,6 +213,26 @@
 
     </LinearLayout>
 
+    <!-- Retry button — visible only on DECLINED or ERROR -->
+    <Button
+        android:id="@+id/btn_retry"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:text="TRY AGAIN"
+        android:textColor="@color/abs_bone"
+        android:textSize="18sp"
+        android:fontFamily="@font/archivo_black"
+        android:letterSpacing="0.12"
+        android:textAllCaps="true"
+        android:background="@drawable/bg_abs_primary_btn"
+        android:elevation="0dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_payment" />
+
     <!-- Session countdown -->
     <TextView
         android:id="@+id/text_countdown"
