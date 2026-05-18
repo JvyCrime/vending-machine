@@ -2,13 +2,20 @@ package com.example.myapplication.hardware
 
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
-import com.hoho.android.usbserial.driver.CdcAcmSerialDriver
-import com.hoho.android.usbserial.driver.UsbSerialPort
-import com.hoho.android.usbserial.driver.UsbSerialProber
-import kotlinx.coroutines.*
+import android.util.Log
+import com.bitmick.marshall.models.vmc_configuration
+import com.bitmick.marshall.vmc.vmc_framework
+import com.bitmick.marshall.vmc.vmc_link
+import com.bitmick.marshall.vmc.vmc_vend_t
+import com.digitalmediavending.hardware.nayax_sdk_utils.lowlevel_serial_ftdi
+import com.digitalmediavending.hardware.nayax_sdk_utils.usbserial.driver.FtdiSerialDriver
+import com.digitalmediavending.hardware.nayax_sdk_utils.usbserial.driver.UsbSerialPort
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import java.io.IOException
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 enum class PaymentState {
     IDLE,
@@ -32,8 +39,7 @@ class NayaxPaymentManager(
     private val usbManager: UsbManager,
     private val usbDevice: UsbDevice,
     private val scope: CoroutineScope
-) {
-    private var serialPort: UsbSerialPort? = null
+) : vmc_vend_t.vend_callbacks_t, vmc_link.vmc_link_events_t {
 
     private val _paymentState = MutableStateFlow(PaymentState.IDLE)
     val paymentState: StateFlow<PaymentState> = _paymentState
@@ -44,198 +50,212 @@ class NayaxPaymentManager(
     private val _isReady = MutableStateFlow(false)
     val isReady: StateFlow<Boolean> = _isReady
 
+    private var serialPort: UsbSerialPort? = null
+    private var framework: vmc_framework? = null
+    private var pendingSession: vmc_vend_t.vend_session_t? = null
+    private var pendingAmountCents: Int = 0
+
     companion object {
-        // Frame delimiters
-        private const val STX: Byte = 0x02
-        private const val ETX: Byte = 0x03
-
-        // Commands: VMC → Nayax
-        private const val CMD_RESET: Byte     = 0x01
-        private const val CMD_SET_PRICE: Byte = 0x02
-        private const val CMD_ENABLE: Byte    = 0x03
-        private const val CMD_DISABLE: Byte   = 0x04
-        private const val CMD_CANCEL: Byte    = 0x05
-
-        // Responses: Nayax → VMC
-        private const val RESP_READY: Byte         = 0x10
-        private const val RESP_CARD_DETECTED: Byte = 0x11
-        private const val RESP_PROCESSING: Byte    = 0x12
-        private const val RESP_APPROVED: Byte      = 0x13
-        private const val RESP_DECLINED: Byte      = 0x14
-        private const val RESP_ERROR: Byte         = 0x15
+        private const val TAG = "NayaxPayment"
     }
 
     fun initialize() {
         scope.launch(Dispatchers.IO) {
             try {
+                Log.d(TAG, "initialize() — VID=%04X PID=%04X".format(usbDevice.vendorId, usbDevice.productId))
+
                 if (!usbManager.hasPermission(usbDevice)) {
-                    _isReady.value = false
+                    Log.w(TAG, "No USB permission")
+                    _paymentState.value = PaymentState.ERROR
+                    _paymentResult.value = PaymentResult(false, error = "USB permission not granted")
                     return@launch
                 }
 
-                val driver = CustomSerialProber.getCustomProber().probeDevice(usbDevice)
-                    ?: CdcAcmSerialDriver(usbDevice)
+                // Open the FTDI serial port using the bundled usb-serial driver
+                val driver = FtdiSerialDriver(usbDevice)
+                val connection = usbManager.openDevice(usbDevice)
+                    ?: throw IllegalStateException("Failed to open USB device")
 
-                serialPort = driver.ports[0]
-                serialPort?.open(usbManager.openDevice(usbDevice))
-                serialPort?.setParameters(
-                    HardwareService.SERIAL_BAUD_RATE,
-                    8,
-                    UsbSerialPort.STOPBITS_1,
-                    UsbSerialPort.PARITY_NONE
-                )
+                val port = driver.ports[0]
+                port.open(connection)
+                serialPort = port
+                Log.d(TAG, "FTDI serial port opened")
 
-                sendFrame(CMD_RESET)
-                delay(500)
+                // Reset singleton to avoid stale state from previous app sessions
+                vmc_framework.reset()
 
-                _isReady.value = true
-                _paymentState.value = PaymentState.IDLE
-                startReading()
+                val config = vmc_configuration().apply {
+                    port_vpos      = port
+                    port_vpos_baud = HardwareService.NAYAX_BAUD_RATE
+                    model          = "android-marshall-demo"
+                    serial         = "1434324619381374"
+                    sw_ver         = "1.0.0.0"
+                    machine_type   = vmc_configuration.machine_type_type_retail
+                    always_idle    = true   // Pre-Selection: price sent before card tap
+                    // reader_always_on is forced true by vmc_link.start() when always_idle=true
+                    multi_vend_support      = false  // true causes Auth Status -1 on most accounts
+                    multi_session_support   = false
+                    price_not_final_support = false
+                    debug               = true
+                    dump_packets_level  = 2
+                }
+
+                framework = vmc_framework.getInstance().also { fw ->
+                    fw.link
+                        .set_lowlevel(lowlevel_serial_ftdi())
+                        .configure(config)
+                        .set_events(this@NayaxPaymentManager)
+                    fw.vend.register_callbacks(this@NayaxPaymentManager)
+                    fw.start()
+                }
+
+                _paymentState.value = PaymentState.INITIALIZING
+                Log.d(TAG, "Marshall SDK started — waiting for link-up")
+
             } catch (e: Exception) {
-                _isReady.value = false
+                Log.e(TAG, "initialize() failed: ${e.message}", e)
                 _paymentState.value = PaymentState.ERROR
                 _paymentResult.value = PaymentResult(false, error = e.message)
             }
         }
     }
 
-    // Frame layout: STX | LEN | CMD | DATA… | LRC | ETX
-    // LEN  = sizeof(CMD) + sizeof(DATA)
-    // LRC  = XOR of (LEN, CMD, and every DATA byte)
-    private fun buildFrame(cmd: Byte, data: ByteArray = ByteArray(0)): ByteArray {
-        val len = (1 + data.size).toByte()
-        var lrc = (len.toInt() xor cmd.toInt()).toByte()
-        for (b in data) lrc = (lrc.toInt() xor b.toInt()).toByte()
+    // ─────────────────────────────────────────────────────────────
+    // vmc_link.vmc_link_events_t
+    // ─────────────────────────────────────────────────────────────
 
-        return ByteArray(5 + data.size).apply {
-            this[0] = STX
-            this[1] = len
-            this[2] = cmd
-            data.copyInto(this, 3)
-            this[3 + data.size] = lrc
-            this[4 + data.size] = ETX
+    override fun onReady(config: vmc_link.vpos_config_t?) {
+        Log.i(TAG, "Marshall SDK connected to Nayax VPOS Touch")
+        _isReady.value = true
+    }
+
+    override fun onCommError() {
+        Log.w(TAG, "Marshall SDK comm error / link down")
+        _isReady.value = false
+        if (_paymentState.value == PaymentState.WAITING_FOR_CARD ||
+            _paymentState.value == PaymentState.PROCESSING) {
+            _paymentState.value = PaymentState.ERROR
+            _paymentResult.value = PaymentResult(false, error = "Reader disconnected")
         }
     }
 
-    private fun sendFrame(cmd: Byte, data: ByteArray = ByteArray(0)) {
-        serialPort?.write(buildFrame(cmd, data), 1000)
-    }
+    // ─────────────────────────────────────────────────────────────
+    // vmc_vend_t.vend_callbacks_t
+    // ─────────────────────────────────────────────────────────────
 
-    private fun startReading() {
-        scope.launch(Dispatchers.IO) {
-            val buffer = ByteArray(1024)
-            val frameBuffer = mutableListOf<Byte>()
-            var inFrame = false
-
-            while (isActive && _isReady.value) {
-                try {
-                    val bytesRead = serialPort?.read(buffer, 500) ?: break
-                    for (i in 0 until bytesRead) {
-                        val b = buffer[i]
-                        when {
-                            b == STX -> {
-                                inFrame = true
-                                frameBuffer.clear()
-                            }
-                            b == ETX && inFrame -> {
-                                inFrame = false
-                                processFrame(frameBuffer.toByteArray())
-                                frameBuffer.clear()
-                            }
-                            inFrame -> frameBuffer.add(b)
-                        }
-                    }
-                } catch (e: IOException) {
-                    if (isActive) delay(100)
-                }
-            }
+    override fun onReady(previousSession: vmc_vend_t.vend_session_t?) {
+        Log.i(TAG, "Ready to accept payments!")
+        // If a payment was pending and session ended, user cancelled on the VPOS
+        if (_paymentState.value == PaymentState.WAITING_FOR_CARD ||
+            _paymentState.value == PaymentState.PROCESSING) {
+            Log.w(TAG, "Session ended while payment pending — user cancelled on VPOS")
+            _paymentState.value = PaymentState.CANCELLED
+            _paymentResult.value = PaymentResult(false, error = "Payment cancelled")
+        } else {
+            _paymentState.value = PaymentState.IDLE
         }
     }
 
-    // data contains: LEN | CMD | PAYLOAD… | LRC  (no STX/ETX)
-    private fun processFrame(data: ByteArray) {
-        if (data.size < 3) return
+    override fun onSessionBegin(fundsAvailable: Int) {
+        Log.i(TAG, "Card tapped — funds available: $fundsAvailable cents")
+        _paymentState.value = PaymentState.PROCESSING
+    }
 
-        // Verify LRC
-        var calcLrc: Byte = 0
-        for (i in 0 until data.size - 1) calcLrc = (calcLrc.toInt() xor data[i].toInt()).toByte()
-        if (calcLrc != data.last()) return
+    override fun onVendApproved(session: vmc_vend_t.vend_session_t?): Boolean {
+        Log.i(TAG, "Payment APPROVED — amount: $pendingAmountCents cents")
+        pendingSession = session
+        _paymentState.value = PaymentState.APPROVED
+        _paymentResult.value = PaymentResult(
+            success = true,
+            amount = pendingAmountCents / 100.0,
+            transactionId = "TXN_${System.currentTimeMillis()}"
+        )
+        return true  // return true = vend success; false = motor failed, trigger refund
+    }
 
-        val cmd = data[1]
-        scope.launch {
-            when (cmd) {
-                RESP_READY -> _isReady.value = true
+    override fun onVendDenied(session: vmc_vend_t.vend_session_t?) {
+        Log.i(TAG, "Payment DENIED — auth status: ${session?.data?.vmc_auth_status}")
+        _paymentState.value = PaymentState.DECLINED
+        _paymentResult.value = PaymentResult(false, error = "Payment declined")
+    }
 
-                RESP_CARD_DETECTED -> {
-                    if (_paymentState.value == PaymentState.WAITING_FOR_CARD) {
-                        _paymentState.value = PaymentState.PROCESSING
-                    }
-                }
-
-                RESP_PROCESSING -> _paymentState.value = PaymentState.PROCESSING
-
-                RESP_APPROVED -> {
-                    val txnId = if (data.size >= 7) extractTxnId(data, 2)
-                                else "TXN_${System.currentTimeMillis()}"
-                    _paymentState.value = PaymentState.APPROVED
-                    _paymentResult.value = PaymentResult(success = true, transactionId = txnId)
-                }
-
-                RESP_DECLINED -> {
-                    _paymentState.value = PaymentState.DECLINED
-                    _paymentResult.value = PaymentResult(success = false, error = "Payment declined")
-                }
-
-                RESP_ERROR -> {
-                    val code = if (data.size >= 4) (data[2].toInt() and 0xFF) else 0
-                    _paymentState.value = PaymentState.ERROR
-                    _paymentResult.value = PaymentResult(false, error = "Reader error (code $code)")
-                }
-            }
+    override fun onSettlement(success: Boolean) {
+        if (!success) {
+            Log.e(TAG, "Settlement FAILED — payment may not have been captured!")
+        } else {
+            Log.i(TAG, "Settlement complete")
         }
     }
 
-    private fun extractTxnId(data: ByteArray, offset: Int): String {
-        val value = ((data[offset].toInt() and 0xFF) shl 24) or
-                    ((data[offset + 1].toInt() and 0xFF) shl 16) or
-                    ((data[offset + 2].toInt() and 0xFF) shl 8) or
-                    (data[offset + 3].toInt() and 0xFF)
-        return "TXN_$value"
+    override fun onTransactionInfo(data: vmc_vend_t.vend_session_data_t?) {
+        Log.d(TAG, "Transaction info — TXN ID: ${data?.transaction_id}, card: ${data?.card_type}")
     }
+
+    override fun onStatus(status: Int) {
+        Log.d(TAG, "Status: $status")
+    }
+
+    override fun onReaderState(enabled: Boolean) {
+        Log.d(TAG, "Reader state: ${if (enabled) "enabled" else "disabled"}")
+    }
+
+    override fun onOpenedSessions(sessions: ShortArray?) {
+        Log.d(TAG, "Opened sessions: ${sessions?.size}")
+    }
+
+    override fun onReceipt(type: Int, data: String?) {
+        Log.d(TAG, "Receipt: type=$type data=$data")
+    }
+
+    override fun onRemoteVend(fundsAvailable: Int, itemNumber: Int, itemOptions: Int) {
+        Log.d(TAG, "Remote vend: item=$itemNumber funds=$fundsAvailable")
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Public API
+    // ─────────────────────────────────────────────────────────────
 
     fun initiatePayment(amount: Double) {
+        if (!_isReady.value) {
+            Log.w(TAG, "initiatePayment called but reader not ready")
+            _paymentState.value = PaymentState.ERROR
+            _paymentResult.value = PaymentResult(false, error = "Payment reader not ready")
+            return
+        }
+        pendingAmountCents = (amount * 100).roundToInt()
+        Log.i(TAG, "initiatePayment: $pendingAmountCents cents")
+        _paymentResult.value = null
+        _paymentState.value = PaymentState.WAITING_FOR_CARD
+
+        // Pre-Selection: send vend_request NOW (before card tap) so VPOS displays the price
+        val session = vmc_vend_t.vend_session_t(
+            1,                                          // item number
+            1,                                          // quantity
+            vmc_vend_t.vend_item_t.UNIT_DONT_CARE.toByte(),
+            pendingAmountCents                          // price in cents
+        )
+        pendingSession = session
+        framework?.vend?.vend_request(session)
+        Log.i(TAG, "vend_request sent — VPOS should now show price and 'Tap Card'")
+    }
+
+    fun confirmVend(success: Boolean) {
         scope.launch(Dispatchers.IO) {
-            if (!_isReady.value) {
-                _paymentState.value = PaymentState.ERROR
-                _paymentResult.value = PaymentResult(false, error = "Payment reader not ready")
-                return@launch
-            }
-            try {
-                _paymentResult.value = null
-                _paymentState.value = PaymentState.INITIALIZING
-
-                val cents = (amount * 100).toInt()
-                val priceBytes = byteArrayOf(
-                    (cents shr 24).toByte(),
-                    (cents shr 16).toByte(),
-                    (cents shr 8).toByte(),
-                    cents.toByte()
-                )
-                sendFrame(CMD_SET_PRICE, priceBytes)
-                delay(200)
-                sendFrame(CMD_ENABLE)
-
-                _paymentState.value = PaymentState.WAITING_FOR_CARD
-            } catch (e: Exception) {
-                _paymentState.value = PaymentState.ERROR
-                _paymentResult.value = PaymentResult(false, error = e.message)
-            }
+            val session = pendingSession ?: return@launch
+            session.session_status = if (success)
+                vmc_vend_t.session_status_ok_e
+            else
+                vmc_vend_t.session_status_fail_to_dispense_e
+            framework?.vend?.session_close(session)
+            pendingSession = null
+            Log.i(TAG, "confirmVend($success) — session closed")
         }
     }
 
     fun cancelPayment() {
         scope.launch(Dispatchers.IO) {
-            try { sendFrame(CMD_CANCEL) } catch (_: Exception) {}
+            Log.i(TAG, "cancelPayment")
+            framework?.vend?.session_cancel()
             _paymentState.value = PaymentState.CANCELLED
         }
     }
@@ -244,13 +264,23 @@ class NayaxPaymentManager(
         scope.launch {
             _paymentState.value = PaymentState.IDLE
             _paymentResult.value = null
+            pendingAmountCents = 0
+            pendingSession = null
+            // Re-arm the reader for the next transaction
+            if (_isReady.value) {
+                framework?.vend?.vend_request(
+                    vmc_vend_t.vend_session_t(1, 1, vmc_vend_t.vend_item_t.UNIT_DONT_CARE.toByte(), 0)
+                )
+            }
         }
     }
 
     fun close() {
         scope.launch(Dispatchers.IO) {
+            Log.i(TAG, "close()")
+            vmc_framework.reset()
+            framework = null
             try {
-                sendFrame(CMD_DISABLE)
                 serialPort?.close()
             } catch (_: Exception) {}
             serialPort = null

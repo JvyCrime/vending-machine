@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Body>
+	<TerminalCountryCode>0840</TerminalCountryCode>
+	<TransCurrencyCode>0840</TransCurrencyCode>
+	<TransCurrencyExponent>02</TransCurrencyExponent>
+	<TransRefCurrencyCode>0840</TransRefCurrencyCode>
+	<TransRefCurrencyExponent>02</TransRefCurrencyExponent>
+	<AcquirerID>123456789012</AcquirerID>
+	<TerminalID>EMVTest</TerminalID>
+	<IFDSerial>Terminal</IFDSerial>
+	<TerminalCapabilities>E008C8</TerminalCapabilities>
+	<AdditionalTerminalCapabilities>0000000000</AdditionalTerminalCapabilities>
+    <TerminalType>22</TerminalType>
+	<MerchantCategoryCode>0101</MerchantCategoryCode>
+	<MerchantID>000000000000000</MerchantID>
+	<MerchantNameLocation>JianShi</MerchantNameLocation>
+	<TerminalFloorLimit>00003A98</TerminalFloorLimit>
+	<ThresholdValueBiasedRandSelection>000000005000</ThresholdValueBiasedRandSelection>
+	<MaxTargetPercentBiasedRandSelection>00</MaxTargetPercentBiasedRandSelection>
+	<TargetPercentBiasedRandSelection>00</TargetPercentBiasedRandSelection>
+	<TerminalActionCodeDenial>0000000000</TerminalActionCodeDenial>
+	<TerminalActionCodeOnline>0000000000</TerminalActionCodeOnline>
+	<TerminalActionCodeDefault>0000000000</TerminalActionCodeDefault>
+</Body>

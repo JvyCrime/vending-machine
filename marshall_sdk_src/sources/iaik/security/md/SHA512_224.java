@@ -1,0 +1,10 @@
+package iaik.security.md;
+
+/* JADX INFO: loaded from: classes.dex */
+public final class SHA512_224 extends SHA64bit {
+    private static final long[] p = {-8341449602262348382L, 8350123849800275158L, 2160240930085379202L, 7466358040605728719L, 1111592415079452072L, 8638871050018654530L, 4583966954114332360L, 1230299281376055969L};
+
+    public SHA512_224() {
+        super("SHA512/224", 28, 128, p);
+    }
+}

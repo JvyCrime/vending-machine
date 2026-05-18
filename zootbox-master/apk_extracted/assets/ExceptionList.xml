@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Body>
+	<EXCEPTIONlIST PAN="373737345678904F">
+		<PAN_SN>00</PAN_SN>
+	</EXCEPTIONlIST>
+	
+	<EXCEPTIONlIST PAN="2222999999999990">
+		<PAN_SN>00</PAN_SN>
+	</EXCEPTIONlIST>
+
+
+</Body>

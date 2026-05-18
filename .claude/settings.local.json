@@ -12,7 +12,12 @@
       "PowerShell(Get-ChildItem -Recurse \"C:\\\\Users\\\\Nyxion\\\\.claude\\\\projects\\\\c--Users-Nyxion-Documents-vending-machine\\\\design_extracted\" | ForEach-Object { $_.FullName })",
       "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\Nyxion\\\\Documents\\\\vending-machine\\\\zootbox-master\\\\app\\\\src\\\\main\\\\java\\\\com\\\\example\\\\myapplication\" -Filter \"*.java\" -Recurse)",
       "Bash(Select-Object FullName)",
-      "PowerShell(ls -R \"c:\\\\Users\\\\Nyxion\\\\Documents\\\\vending-machine\\\\zootbox-master\\\\app\\\\src\\\\main\\\\java\" -ErrorAction SilentlyContinue)"
+      "PowerShell(ls -R \"c:\\\\Users\\\\Nyxion\\\\Documents\\\\vending-machine\\\\zootbox-master\\\\app\\\\src\\\\main\\\\java\" -ErrorAction SilentlyContinue)",
+      "Bash(ls /c/Users/Nyxion/AppData/Local/Android/Sdk/build-tools/)",
+      "Read(//c/Users/Nyxion/AppData/Local/Android/Sdk/build-tools//**)",
+      "Bash(/c/Users/Nyxion/AppData/Local/Android/Sdk/build-tools/36.1.0/dexdump.exe /c/Users/Nyxion/Documents/vending-machine/zootbox-master/apk_extracted/classes.dex)",
+      "PowerShell(head -20)",
+      "Bash('/c/Program Files/Android/Android Studio/jbr/bin/java.exe' -jar /c/Users/Nyxion/Documents/vending-machine/jadx/lib/jadx-1.5.5-all.jar --output-dir /c/Users/Nyxion/Documents/vending-machine/marshall_sdk_src --no-res /c/Users/Nyxion/Documents/vending-machine/zootbox-master/com.hardware.generic_wallmachine678.apk)"
     ]
   }
 }

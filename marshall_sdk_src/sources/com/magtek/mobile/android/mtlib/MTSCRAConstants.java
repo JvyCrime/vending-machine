@@ -1,0 +1,52 @@
+package com.magtek.mobile.android.mtlib;
+
+/* JADX INFO: loaded from: classes.dex */
+public class MTSCRAConstants {
+    public static String DEVICE_TAG_CAPS_MAGNEPRINT = "8123";
+    public static String DEVICE_TAG_CAPS_MAGNEPRINT_ENCRYPTION = "8123";
+    public static String DEVICE_TAG_CAPS_MAGNESAFE20 = "8125";
+    public static String DEVICE_TAG_CAPS_MSR = "8120";
+    public static String DEVICE_TAG_CAPS_MSR_ENCRYPTION = "8122";
+    public static String DEVICE_TAG_CAPS_TRACKS = "8121";
+    public static String DEVICE_TAG_CARD_EXPDATE = "8244";
+    public static String DEVICE_TAG_CARD_IIN = "8242";
+    public static String DEVICE_TAG_CARD_LAST4 = "8243";
+    public static String DEVICE_TAG_CARD_NAME = "8241";
+    public static String DEVICE_TAG_CARD_SVCCODE = "8245";
+    public static String DEVICE_TAG_DEVICETOHOST_RESPONSE = "C104";
+    public static String DEVICE_TAG_DEVICE_CONFIGURATION = "C304";
+    public static String DEVICE_TAG_DEVICE_INFORMATION = "C302";
+    public static String DEVICE_TAG_DEVICE_MAINFIRMWARE = "8103";
+    public static String DEVICE_TAG_DEVICE_MODELNAME = "8104";
+    public static String DEVICE_TAG_DEVICE_SERIAL_INTERNAL = "8101";
+    public static String DEVICE_TAG_DEVICE_SERIAL_MAGTEK = "8102";
+    public static String DEVICE_TAG_DEVICE_STATUS_BATTERYLEVEL = "8140";
+    public static String DEVICE_TAG_DEVICE_STATUS_L1 = "C303";
+    public static String DEVICE_TAG_DEVICE_STATUS_SWIPECOUNT = "8141";
+    public static String DEVICE_TAG_ENCRYPTED_MAGNEPRINT = "8214";
+    public static String DEVICE_TAG_ENCRYPTED_MAGNEPRINT_RAW = "830D";
+    public static String DEVICE_TAG_ENCRYPTED_MAGNEPRINT_STS = "830E";
+    public static String DEVICE_TAG_ENCRYPTED_SESSIONID = "8309";
+    public static String DEVICE_TAG_ENCRYPTED_TRACK1 = "8211";
+    public static String DEVICE_TAG_ENCRYPTED_TRACK1_RAW = "830A";
+    public static String DEVICE_TAG_ENCRYPTED_TRACK2 = "8212";
+    public static String DEVICE_TAG_ENCRYPTED_TRACK2_RAW = "830B";
+    public static String DEVICE_TAG_ENCRYPTED_TRACK3 = "8213";
+    public static String DEVICE_TAG_ENCRYPTED_TRACK3_RAW = "830C";
+    public static String DEVICE_TAG_HASHCODE = "8308";
+    public static String DEVICE_TAG_MASKED_TRACK1 = "8221";
+    public static String DEVICE_TAG_MASKED_TRACK2 = "8222";
+    public static String DEVICE_TAG_MASKED_TRACK3 = "8223";
+    public static String DEVICE_TAG_MSR_KEYID = "8301";
+    public static String DEVICE_TAG_MSR_LOCALMERCHANTDATA = "C202";
+    public static String DEVICE_TAG_MSR_SECUREDATA = "C203";
+    public static String DEVICE_TAG_MSR_SWIPEDATA = "C101";
+    public static String DEVICE_TAG_MSR_SWIPESTATUS = "C201";
+    public static String DEVICE_TAG_PAN_LENGTH = "8246";
+    public static String DEVICE_TAG_STATUS_CARD = "8261";
+    public static String DEVICE_TAG_STATUS_OPERATION = "8001";
+    public static String DEVICE_TAG_STATUS_TRACKS = "8262";
+    public static String DEVICE_TAG_TLVVERSION = "8109";
+    public static String DEVICE_TAG_UNRECOGNIZED = "C204";
+    public static String DEVICE_TAG_V5_MSR_SWIPEDATA = "C106";
+}

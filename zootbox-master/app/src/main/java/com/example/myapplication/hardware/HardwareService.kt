@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.StateFlow
 class HardwareService : Service() {
     private val binder = LocalBinder()
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    
+
     private lateinit var usbManager: UsbManager
     private var idScannerManager: IdScannerManager? = null
     private var nayaxPaymentManager: NayaxPaymentManager? = null
@@ -43,33 +43,45 @@ class HardwareService : Service() {
         private const val NOTIFICATION_ID = 1
         private const val ACTION_USB_PERMISSION = "com.example.myapplication.USB_PERMISSION"
 
-        // USB Vendor/Product IDs from hardware analysis
+        // E-Seek M260 ID Scanner
         const val ID_SCANNER_VID = 0x0403
         const val ID_SCANNER_PID = 0x6001
-        const val NAYAX_VID = 0x26f1
-        const val NAYAX_PID = 0x5650
-        const val NAYAX_TTY_ACM = "/dev/ttyACM0"
-        const val SERIAL_BAUD_RATE = 9600
+
+        // Nayax VPOS Touch — FTDI Chipi-X interface (0x0403:0x6015) — USE THIS
+        // This is the XChiPi-X adapter in the chain (Marshall protocol packets)
+        const val FTDI_VID       = 0x0403
+        const val NAYAX_FTDI_PID = 0x6015
+
+        // Nayax VPOS Touch — CDC-ACM interfaces (return NAK bytes only)
+        const val NAYAX_VID     = 0x26f1
+        const val NAYAX_PID     = 0x5650
+        const val NAYAX_PID_ALT = 0x222a
+
+        const val ID_SCANNER_BAUD_RATE = 9600
+        const val NAYAX_BAUD_RATE = 115200
+
+        fun isNayaxDevice(device: UsbDevice): Boolean =
+            (device.vendorId == FTDI_VID  && device.productId == NAYAX_FTDI_PID) ||
+            (device.vendorId == NAYAX_VID && device.productId == NAYAX_PID)      ||
+            (device.vendorId == NAYAX_VID && device.productId == NAYAX_PID_ALT)
     }
+
+    // Pending permission queue — Android only shows one dialog at a time
+    private val pendingPermissions = mutableListOf<UsbDevice>()
 
     private val usbPermissionReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != ACTION_USB_PERMISSION) return
             val device: UsbDevice? = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
             val granted = intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
-            if (!granted || device == null) return
-
-            if (device.vendorId == ID_SCANNER_VID && device.productId == ID_SCANNER_PID) {
-                idScannerManager = IdScannerManager(usbManager, device, serviceScope)
-                _idScannerManagerFlow.value = idScannerManager
-                idScannerManager?.initialize()
+            if (granted && device != null) {
+                if (device.vendorId == ID_SCANNER_VID && device.productId == ID_SCANNER_PID) {
+                    initializeScanner(device)
+                } else if (isNayaxDevice(device)) {
+                    initializeNayax(device)
+                }
             }
-
-            if (device.vendorId == NAYAX_VID && device.productId == NAYAX_PID) {
-                nayaxPaymentManager = NayaxPaymentManager(usbManager, device, serviceScope)
-                _nayaxPaymentManagerFlow.value = nayaxPaymentManager
-                nayaxPaymentManager?.initialize()
-            }
+            processNextPermission()
         }
     }
 
@@ -79,8 +91,8 @@ class HardwareService : Service() {
             when (intent.action) {
                 UsbManager.ACTION_USB_DEVICE_ATTACHED -> {
                     if (device != null &&
-                        ((device.vendorId == ID_SCANNER_VID && device.productId == ID_SCANNER_PID) ||
-                         (device.vendorId == NAYAX_VID      && device.productId == NAYAX_PID))) {
+                        (device.vendorId == ID_SCANNER_VID && device.productId == ID_SCANNER_PID ||
+                         isNayaxDevice(device))) {
                         initializeHardware()
                     }
                 }
@@ -90,7 +102,7 @@ class HardwareService : Service() {
                         idScannerManager = null
                         _idScannerManagerFlow.value = null
                     }
-                    if (device?.vendorId == NAYAX_VID && device?.productId == NAYAX_PID) {
+                    if (device != null && isNayaxDevice(device)) {
                         nayaxPaymentManager?.close()
                         nayaxPaymentManager = null
                         _nayaxPaymentManagerFlow.value = null
@@ -103,7 +115,7 @@ class HardwareService : Service() {
     inner class LocalBinder : Binder() {
         fun getService(): HardwareService = this@HardwareService
     }
-    
+
     override fun onCreate() {
         super.onCreate()
         usbManager = getSystemService(Context.USB_SERVICE) as UsbManager
@@ -128,9 +140,9 @@ class HardwareService : Service() {
         }
         initializeHardware()
     }
-    
+
     override fun onBind(intent: Intent?): IBinder = binder
-    
+
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(usbPermissionReceiver)
@@ -139,7 +151,7 @@ class HardwareService : Service() {
         nayaxPaymentManager?.close()
         serviceScope.cancel()
     }
-    
+
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -149,18 +161,16 @@ class HardwareService : Service() {
             ).apply {
                 description = "Manages ID scanner and payment reader"
             }
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
+            getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
         }
     }
-    
+
     private fun createNotification(): Notification {
-        val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
+            this, 0,
+            Intent(this, MainActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE
         )
-        
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Hardware Service")
             .setContentText("ID Scanner and Payment Reader Active")
@@ -168,50 +178,59 @@ class HardwareService : Service() {
             .setContentIntent(pendingIntent)
             .build()
     }
-    
+
     private fun initializeHardware() {
-        // ID Scanner
-        val idScannerDevice = findUsbDevice(ID_SCANNER_VID, ID_SCANNER_PID)
-        if (idScannerDevice != null) {
-            if (usbManager.hasPermission(idScannerDevice)) {
-                idScannerManager = IdScannerManager(usbManager, idScannerDevice, serviceScope)
-                _idScannerManagerFlow.value = idScannerManager
-                idScannerManager?.initialize()
-            } else {
-                val permissionIntent = PendingIntent.getBroadcast(
-                    this, 0,
-                    Intent(ACTION_USB_PERMISSION),
-                    PendingIntent.FLAG_IMMUTABLE
-                )
-                usbManager.requestPermission(idScannerDevice, permissionIntent)
-            }
+        pendingPermissions.clear()
+
+        // Nayax first — try FTDI Chipi-X (0403:6015) before CDC-ACM fallbacks
+        val nayaxDevice = findUsbDevice(FTDI_VID, NAYAX_FTDI_PID)
+            ?: findUsbDevice(NAYAX_VID, NAYAX_PID)
+            ?: findUsbDevice(NAYAX_VID, NAYAX_PID_ALT)
+        nayaxDevice?.let {
+            if (usbManager.hasPermission(it)) initializeNayax(it)
+            else pendingPermissions.add(it)
         }
 
-        // Nayax payment reader
-        val nayaxDevice = findUsbDevice(NAYAX_VID, NAYAX_PID)
-        if (nayaxDevice != null) {
-            if (usbManager.hasPermission(nayaxDevice)) {
-                nayaxPaymentManager = NayaxPaymentManager(usbManager, nayaxDevice, serviceScope)
-                _nayaxPaymentManagerFlow.value = nayaxPaymentManager
-                nayaxPaymentManager?.initialize()
-            } else {
-                val permissionIntent = PendingIntent.getBroadcast(
-                    this, 1,
-                    Intent(ACTION_USB_PERMISSION),
-                    PendingIntent.FLAG_IMMUTABLE
+        // ID Scanner second
+        val idScannerDevice = findUsbDevice(ID_SCANNER_VID, ID_SCANNER_PID)
+        idScannerDevice?.let {
+            if (usbManager.hasPermission(it)) initializeScanner(it)
+            else pendingPermissions.add(it)
+        }
+
+        processNextPermission()
+    }
+
+    private fun initializeNayax(device: UsbDevice) {
+        nayaxPaymentManager = NayaxPaymentManager(usbManager, device, serviceScope)
+        _nayaxPaymentManagerFlow.value = nayaxPaymentManager
+        nayaxPaymentManager?.initialize()
+    }
+
+    private fun initializeScanner(device: UsbDevice) {
+        idScannerManager = IdScannerManager(usbManager, device, serviceScope)
+        _idScannerManagerFlow.value = idScannerManager
+        idScannerManager?.initialize()
+    }
+
+    private fun processNextPermission() {
+        synchronized(pendingPermissions) {
+            if (pendingPermissions.isNotEmpty()) {
+                val device = pendingPermissions.removeAt(0)
+                val pi = PendingIntent.getBroadcast(
+                    this,
+                    device.deviceId,
+                    Intent(ACTION_USB_PERMISSION).apply { putExtra(UsbManager.EXTRA_DEVICE, device) },
+                    PendingIntent.FLAG_MUTABLE
                 )
-                usbManager.requestPermission(nayaxDevice, permissionIntent)
+                usbManager.requestPermission(device, pi)
             }
         }
     }
-    
-    private fun findUsbDevice(vid: Int, pid: Int): UsbDevice? {
-        return usbManager.deviceList.values.find { device ->
-            device.vendorId == vid && device.productId == pid
-        }
-    }
-    
+
+    private fun findUsbDevice(vid: Int, pid: Int): UsbDevice? =
+        usbManager.deviceList.values.find { it.vendorId == vid && it.productId == pid }
+
     fun getIdScannerManager(): IdScannerManager? = idScannerManager
     fun getNayaxPaymentManager(): NayaxPaymentManager? = nayaxPaymentManager
 }
-

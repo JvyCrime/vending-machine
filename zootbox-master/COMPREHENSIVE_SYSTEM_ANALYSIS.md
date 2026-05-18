@@ -1,4 +1,5 @@
 # COMPREHENSIVE SYSTEM ANALYSIS
+
 ## DMVI Android Vending Machine - Complete Hardware, Bootloader & Software Architecture
 
 **Analysis Date:** November 21, 2025
@@ -28,65 +29,65 @@ This document provides a complete technical analysis of a DMVI (Digital Media Ve
 
 ### 1.1 Main Controller
 
-| Component | Specification | Details |
-|-----------|--------------|---------|
-| **Model** | SECO SYS-C31-DMV-01-I0 | Industrial embedded computer |
-| **Manufacturer** | SECO Spa | Arezzo, Italy |
-| **Serial Number** | 221141736 | Board serial |
-| **Device Serial** | b0535a1f9f0f6ce0 | Android serial number |
-| **Machine Serial** | 00:51:64:84:35:02 | DMVI machine identifier |
+| Component          | Specification          | Details                      |
+| ------------------ | ---------------------- | ---------------------------- |
+| **Model**          | SECO SYS-C31-DMV-01-I0 | Industrial embedded computer |
+| **Manufacturer**   | SECO Spa               | Arezzo, Italy                |
+| **Serial Number**  | 221141736              | Board serial                 |
+| **Device Serial**  | b0535a1f9f0f6ce0       | Android serial number        |
+| **Machine Serial** | 00:51:64:84:35:02      | DMVI machine identifier      |
 
 ### 1.2 Processor & Memory
 
-| Component | Specification |
-|-----------|--------------|
-| **SoC** | Rockchip RK3399K |
-| **CPU Architecture** | ARMv8-A (64-bit) |
-| **CPU Cores** | 6 cores (big.LITTLE) |
-| - Big Cores | 2x ARM Cortex-A72 @ 1.8GHz (0xd08) |
-| - Little Cores | 4x ARM Cortex-A53 @ 1.4GHz (0xd03) |
-| **CPU Features** | fp, asimd, evtstrm, aes, pmull, sha1, sha2, crc32, cpuid |
-| **RAM** | 2GB LPDDR4 |
-| **Storage** | 16GB eMMC (fe330000.sdhci) |
-| **GPU** | ARM Mali-T860 MP4 |
+| Component            | Specification                                            |
+| -------------------- | -------------------------------------------------------- |
+| **SoC**              | Rockchip RK3399K                                         |
+| **CPU Architecture** | ARMv8-A (64-bit)                                         |
+| **CPU Cores**        | 6 cores (big.LITTLE)                                     |
+| - Big Cores          | 2x ARM Cortex-A72 @ 1.8GHz (0xd08)                       |
+| - Little Cores       | 4x ARM Cortex-A53 @ 1.4GHz (0xd03)                       |
+| **CPU Features**     | fp, asimd, evtstrm, aes, pmull, sha1, sha2, crc32, cpuid |
+| **RAM**              | 2GB LPDDR4                                               |
+| **Storage**          | 16GB eMMC (fe330000.sdhci)                               |
+| **GPU**              | ARM Mali-T860 MP4                                        |
 
 ### 1.3 Display
 
-| Component | Specification |
-|-----------|--------------|
-| **Model** | TYALUX TYL-H320KM-F |
-| **Size** | 32 inches |
-| **Type** | Capacitive touchscreen |
-| **Controller** | Goodix 5-0020 (I2C) |
-| **Interface** | HDMI + USB (touch controller) |
-| **Resolution** | Not specified in dumps |
-| **Density** | 160 dpi (mdpi) |
+| Component      | Specification                 |
+| -------------- | ----------------------------- |
+| **Model**      | TYALUX TYL-H320KM-F           |
+| **Size**       | 32 inches                     |
+| **Type**       | Capacitive touchscreen        |
+| **Controller** | Goodix 5-0020 (I2C)           |
+| **Interface**  | HDMI + USB (touch controller) |
+| **Resolution** | Not specified in dumps        |
+| **Density**    | 160 dpi (mdpi)                |
 
 ### 1.4 Connectivity
 
-| Interface | Hardware | Status | MAC/ID |
-|-----------|----------|--------|--------|
-| **WiFi** | AzureWave AW-CM276 | Active | ec:2e:98:d0:9b:3f |
-| **Bluetooth** | AW-CM276 (integrated) | Available | - |
-| **Cellular** | Quectel EG25-G LTE | Active | IMEI present |
-| - Operator | T-Mobile (310260) | Connected | - |
-| - Baseband | EG25GGCR07A02M1G | - | - |
-| - RIL Driver | V3.3.40 | - | - |
-| **Ethernet 1** | eth0 | NO-CARRIER | 00:c0:08:a6:4a:1d |
-| **Ethernet 2** | eth1 | NO-CARRIER | 00:c0:08:a6:4a:1e |
-| **USB** | Rockchip FUSB302 | Active | Type-C controller |
+| Interface      | Hardware              | Status     | MAC/ID            |
+| -------------- | --------------------- | ---------- | ----------------- |
+| **WiFi**       | AzureWave AW-CM276    | Active     | ec:2e:98:d0:9b:3f |
+| **Bluetooth**  | AW-CM276 (integrated) | Available  | -                 |
+| **Cellular**   | Quectel EG25-G LTE    | Active     | IMEI present      |
+| - Operator     | T-Mobile (310260)     | Connected  | -                 |
+| - Baseband     | EG25GGCR07A02M1G      | -          | -                 |
+| - RIL Driver   | V3.3.40               | -          | -                 |
+| **Ethernet 1** | eth0                  | NO-CARRIER | 00:c0:08:a6:4a:1d |
+| **Ethernet 2** | eth1                  | NO-CARRIER | 00:c0:08:a6:4a:1e |
+| **USB**        | Rockchip FUSB302      | Active     | Type-C controller |
 
 ### 1.5 Peripheral Hardware
 
-| Device | Interface | Purpose | Current Status |
-|--------|-----------|---------|----------------|
-| **Motor Controller** | /dev/ttyS0 (UART) | 10-coil dispenser | Active (DMVI service) |
-| **Payment Terminal** | /dev/ttyUSB1 (FTDI) | Nayax MDB | Available |
-| **ID Scanner** | /dev/ttyUSB2 (FTDI) | Age verification | Available |
-| **LTE Modem Data** | /dev/ttyUSB3 | 4G data connection | Active |
-| **LTE Modem AT** | /dev/ttyUSB4 | AT command interface | Active |
-| **Touchscreen** | I2C (Goodix) | User input | Active |
-| **HDMI** | dw-hdmi (Rockchip) | Display output | Active |
+| Device               | Interface           | Purpose              | Current Status        |
+| -------------------- | ------------------- | -------------------- | --------------------- |
+| **Motor Controller** | /dev/ttyS0 (UART)   | 10-coil dispenser    | Active (DMVI service) |
+| **Payment Terminal** | /dev/ttyUSB1 (FTDI) | Nayax MDB            | Available             |
+| **ID Scanner**       | /dev/ttyUSB2 (FTDI) | Age verification     | Available             |
+| **LTE Modem Data**   | /dev/ttyUSB3        | 4G data connection   | Active                |
+| **LTE Modem AT**     | /dev/ttyUSB4        | AT command interface | Active                |
+| **Touchscreen**      | I2C (Goodix)        | User input           | Active                |
+| **HDMI**             | dw-hdmi (Rockchip)  | Display output       | Active                |
 
 ---
 
@@ -96,18 +97,18 @@ This document provides a complete technical analysis of a DMVI (Digital Media Ve
 
 **Type:** Rockchip Proprietary Bootloader (NOT U-Boot)
 
-| Property | Value | Implication |
-|----------|-------|-------------|
-| `ro.bootloader` | unknown | No U-Boot branding visible |
-| `ro.boot.hardware` | rk30board | Rockchip RK3xxx platform |
-| `ro.boot.boot_devices` | fe330000.sdhci | eMMC boot device |
-| `ro.boot.storagemedia` | emmc | Internal flash storage |
-| `ro.boot.console` | ttyFIQ0 | FIQ-based debug console |
-| `ro.boot.selinux` | **permissive** | ⚠️ Security disabled |
-| `ro.boot.verifiedbootstate` | **orange** | ⚠️ Unlocked/dev mode |
-| `ro.boot.veritymode` | enforcing | dm-verity enabled (but bypassed) |
-| `ro.boot.flash.locked` | **0** | ⚠️ Bootloader unlocked |
-| `ro.boot.dynamic_partitions` | true | A/B OTA updates supported |
+| Property                     | Value          | Implication                      |
+| ---------------------------- | -------------- | -------------------------------- |
+| `ro.bootloader`              | unknown        | No U-Boot branding visible       |
+| `ro.boot.hardware`           | rk30board      | Rockchip RK3xxx platform         |
+| `ro.boot.boot_devices`       | fe330000.sdhci | eMMC boot device                 |
+| `ro.boot.storagemedia`       | emmc           | Internal flash storage           |
+| `ro.boot.console`            | ttyFIQ0        | FIQ-based debug console          |
+| `ro.boot.selinux`            | **permissive** | ⚠️ Security disabled             |
+| `ro.boot.verifiedbootstate`  | **orange**     | ⚠️ Unlocked/dev mode             |
+| `ro.boot.veritymode`         | enforcing      | dm-verity enabled (but bypassed) |
+| `ro.boot.flash.locked`       | **0**          | ⚠️ Bootloader unlocked           |
+| `ro.boot.dynamic_partitions` | true           | A/B OTA updates supported        |
 
 ### 2.2 Boot Sequence
 
@@ -153,28 +154,28 @@ Based on kernel logs and system properties:
 
 ### 2.3 Firmware Build Information
 
-| Property | Value |
-|----------|-------|
-| **Build ID** | RQ3A.210705.001 |
-| **Build Date** | Fri Aug 26 13:49:12 UTC 2022 |
-| **Build User** | root |
-| **Build Host** | runner-swjnymdb-project-1972-concurrent-0 |
-| **Build Type** | **userdebug** (NOT production!) |
-| **Build Flavor** | c31_rk3399_Android11-userdebug |
-| **Build Tags** | <v2-02-04>,release-keys |
-| **Android Version** | 11 (API 30) |
-| **Security Patch** | 2021-08-05 (OUTDATED!) |
-| **Manufacturer** | seco |
-| **Product** | c31_rk3399_Android11 |
-| **Board** | rk30sdk |
+| Property            | Value                                     |
+| ------------------- | ----------------------------------------- |
+| **Build ID**        | RQ3A.210705.001                           |
+| **Build Date**      | Fri Aug 26 13:49:12 UTC 2022              |
+| **Build User**      | root                                      |
+| **Build Host**      | runner-swjnymdb-project-1972-concurrent-0 |
+| **Build Type**      | **userdebug** (NOT production!)           |
+| **Build Flavor**    | c31_rk3399_Android11-userdebug            |
+| **Build Tags**      | <v2-02-04>,release-keys                   |
+| **Android Version** | 11 (API 30)                               |
+| **Security Patch**  | 2021-08-05 (OUTDATED!)                    |
+| **Manufacturer**    | seco                                      |
+| **Product**         | c31_rk3399_Android11                      |
+| **Board**           | rk30sdk                                   |
 
 ### 2.4 OTA Update Configuration
 
-| Property | Value | Notes |
-|----------|-------|-------|
-| `ro.product.ota.host` | **192.168.1.1:8888** | ⚠️ Local network OTA server! |
-| Dynamic Partitions | Enabled | Supports A/B seamless updates |
-| Verified Boot | Orange state | Updates not verified |
+| Property              | Value                | Notes                         |
+| --------------------- | -------------------- | ----------------------------- |
+| `ro.product.ota.host` | **192.168.1.1:8888** | ⚠️ Local network OTA server!  |
+| Dynamic Partitions    | Enabled              | Supports A/B seamless updates |
+| Verified Boot         | Orange state         | Updates not verified          |
 
 **SECURITY IMPLICATION:** OTA server on local network means anyone on the network can potentially push firmware updates without authentication.
 
@@ -184,15 +185,15 @@ Based on kernel logs and system properties:
 
 ### 3.1 Partition Layout (16GB eMMC)
 
-| Partition | Block Device | Size | Mount Point | Type | Usage |
-|-----------|--------------|------|-------------|------|-------|
-| **Boot** | mmcblk2p? | ~32MB | - | Raw | Kernel image |
-| **Recovery** | mmcblk2p? | ~32MB | - | Raw | Recovery image |
-| **Metadata** | mmcblk2p11 | 11MB | /metadata | ext4 | 2% used |
-| **System** | dm-0 | 1.0GB | / | f2fs | **100% FULL** (Read-only) |
-| **Scratch** | dm-5 | 600MB | /mnt/scratch | overlay | 2% used |
-| **Cache** | mmcblk2p10 | 740MB | /cache | ext4 | 1% used |
-| **Data** | dm-6 | 10GB | /data | f2fs | 6% used (574MB) |
+| Partition    | Block Device | Size  | Mount Point  | Type    | Usage                     |
+| ------------ | ------------ | ----- | ------------ | ------- | ------------------------- |
+| **Boot**     | mmcblk2p?    | ~32MB | -            | Raw     | Kernel image              |
+| **Recovery** | mmcblk2p?    | ~32MB | -            | Raw     | Recovery image            |
+| **Metadata** | mmcblk2p11   | 11MB  | /metadata    | ext4    | 2% used                   |
+| **System**   | dm-0         | 1.0GB | /            | f2fs    | **100% FULL** (Read-only) |
+| **Scratch**  | dm-5         | 600MB | /mnt/scratch | overlay | 2% used                   |
+| **Cache**    | mmcblk2p10   | 740MB | /cache       | ext4    | 1% used                   |
+| **Data**     | dm-6         | 10GB  | /data        | f2fs    | 6% used (574MB)           |
 
 ### 3.2 Overlay Mount System
 
@@ -233,11 +234,11 @@ User Apps (Removed by Factory Reset):
 
 ### 3.4 Removal Methods
 
-| Method | Reversible? | Risk | Procedure |
-|--------|-------------|------|-----------|
-| **Disable** | ✅ Yes | Low | `pm disable-user com.digitalmediavending*` |
-| **Delete** | ⚠️ No | Medium | `adb remount && rm -rf /system/app/DMVI*` |
-| **Custom ROM** | ⚠️ No | High | Flash AOSP/LineageOS via RKDevTool |
+| Method         | Reversible? | Risk   | Procedure                                  |
+| -------------- | ----------- | ------ | ------------------------------------------ |
+| **Disable**    | ✅ Yes      | Low    | `pm disable-user com.digitalmediavending*` |
+| **Delete**     | ⚠️ No       | Medium | `adb remount && rm -rf /system/app/DMVI*`  |
+| **Custom ROM** | ⚠️ No       | High   | Flash AOSP/LineageOS via RKDevTool         |
 
 ---
 
@@ -291,17 +292,18 @@ User Apps (Removed by Factory Reset):
 
 **Astarte Property Store** - Cloud-synced configuration via MQTT/HTTP
 
-| Interface | Purpose | File Location |
-|-----------|---------|---------------|
-| `Planogram` | Product layout & inventory | 29KB JSON embedded in XML |
-| `Machine` | Device metadata & versions | Machine.xml |
-| `DeviceControl` | Remote commands | DeviceControl.xml |
-| `FirmwareUpdate` | OTA update instructions | FirmwareUpdate.xml |
-| `Theme` | UI branding/colors | Theme.xml |
-| `Advertise` | Promotional content | Advertise.xml (2.3KB) |
-| `TaxesConfiguration` | Tax rates | TaxesConfiguration.xml |
+| Interface            | Purpose                    | File Location             |
+| -------------------- | -------------------------- | ------------------------- |
+| `Planogram`          | Product layout & inventory | 29KB JSON embedded in XML |
+| `Machine`            | Device metadata & versions | Machine.xml               |
+| `DeviceControl`      | Remote commands            | DeviceControl.xml         |
+| `FirmwareUpdate`     | OTA update instructions    | FirmwareUpdate.xml        |
+| `Theme`              | UI branding/colors         | Theme.xml                 |
+| `Advertise`          | Promotional content        | Advertise.xml (2.3KB)     |
+| `TaxesConfiguration` | Tax rates                  | TaxesConfiguration.xml    |
 
 **Cloud Endpoints:**
+
 - S3 Bucket: `dmviproduction-cloud.s3.amazonaws.com`
 - Product images: Pre-signed URLs (7-day expiry)
 - Astarte realm: `o65WCIGTVDCVD4t7ATVNQw`
@@ -312,23 +314,25 @@ User Apps (Removed by Factory Reset):
 
 ### 5.1 Serial Port Configuration
 
-| Device Path | Owner:Group | Permissions | Baud Rate | Protocol | Connected Hardware |
-|-------------|-------------|-------------|-----------|----------|-------------------|
-| `/dev/ttyS0` | root:system | `crwxrwxrwx` | 115200 | DMVI Proprietary | **Motor Controller** (10 coils) |
-| `/dev/ttyUSB1` | radio:radio | `crw-rw----` | 115200 | MDB (Nayax) | **Payment Terminal** |
-| `/dev/ttyUSB2` | radio:radio | `crw-rw----` | 115200 | PDF417/MagStripe | **ID Scanner** |
-| `/dev/ttyUSB3` | radio:radio | `crw-rw----` | 115200 | PPP/QMI | **LTE Modem (Data)** |
-| `/dev/ttyUSB4` | radio:radio | `crw-rw----` | 115200 | AT Commands | **LTE Modem (Control)** |
+| Device Path    | Owner:Group | Permissions  | Baud Rate | Protocol         | Connected Hardware              |
+| -------------- | ----------- | ------------ | --------- | ---------------- | ------------------------------- |
+| `/dev/ttyS0`   | root:system | `crwxrwxrwx` | 115200    | DMVI Proprietary | **Motor Controller** (10 coils) |
+| `/dev/ttyUSB1` | radio:radio | `crw-rw----` | 115200    | MDB (Nayax)      | **Payment Terminal**            |
+| `/dev/ttyUSB2` | radio:radio | `crw-rw----` | 115200    | PDF417/MagStripe | **ID Scanner**                  |
+| `/dev/ttyUSB3` | radio:radio | `crw-rw----` | 115200    | PPP/QMI          | **LTE Modem (Data)**            |
+| `/dev/ttyUSB4` | radio:radio | `crw-rw----` | 115200    | AT Commands      | **LTE Modem (Control)**         |
 
 ### 5.2 Motor Control Protocol (DMVI Proprietary)
 
 **Command Structure:**
+
 ```
 [HEADER] [LENGTH] [COMMAND] [DATA...] [CHECKSUM]
   0xAA     byte      byte     N bytes    byte (sum & 0xFF)
 ```
 
 **Vend Command Example:**
+
 ```
 Dispense from Coil 1:
 [0xAA] [0x03] [0x01] [0x01] [0x01] [0xB0]
@@ -338,6 +342,7 @@ Header Length  Vend  Coil   Duration Checksum
 ```
 
 **Response Format:**
+
 ```
 [0xAA] [0x05] [0x01] [ROW] [COL] [STATUS] [CHECKSUM]
 
@@ -357,6 +362,7 @@ Status Codes:
 - **PCI Compliance:** Handled by Nayax terminal (app never sees card data)
 
 **Transaction Flow:**
+
 1. RESET → Initialize device
 2. SETUP → Exchange capabilities
 3. POLL (continuous) → Monitor for payment
@@ -429,27 +435,29 @@ Authentication: Unknown (likely disabled in userdebug)
 
 ### 7.1 Security Status: ⚠️ CRITICALLY INSECURE
 
-| Security Feature | Status | Risk Level | Details |
-|------------------|--------|------------|---------|
-| **Build Type** | userdebug | 🔴 CRITICAL | Root access enabled |
-| **ADB Root** | ENABLED | 🔴 CRITICAL | `adb root` works |
-| **SELinux** | Permissive | 🔴 CRITICAL | All security bypassed |
-| **Verified Boot** | Orange | 🟡 HIGH | Bootloader unlocked |
-| **dm-verity** | Enforcing (bypassed) | 🟡 HIGH | Not protecting /system |
-| **Bootloader Lock** | Unlocked | 🟡 HIGH | Custom ROMs flashable |
-| **OTA Server** | Local network | 🟡 HIGH | No HTTPS/authentication |
-| **Security Patch** | 2021-08-05 | 🟡 HIGH | 4+ years outdated |
-| **su_daemon** | RUNNING | 🔴 CRITICAL | Root shell accessible |
+| Security Feature    | Status               | Risk Level  | Details                 |
+| ------------------- | -------------------- | ----------- | ----------------------- |
+| **Build Type**      | userdebug            | 🔴 CRITICAL | Root access enabled     |
+| **ADB Root**        | ENABLED              | 🔴 CRITICAL | `adb root` works        |
+| **SELinux**         | Permissive           | 🔴 CRITICAL | All security bypassed   |
+| **Verified Boot**   | Orange               | 🟡 HIGH     | Bootloader unlocked     |
+| **dm-verity**       | Enforcing (bypassed) | 🟡 HIGH     | Not protecting /system  |
+| **Bootloader Lock** | Unlocked             | 🟡 HIGH     | Custom ROMs flashable   |
+| **OTA Server**      | Local network        | 🟡 HIGH     | No HTTPS/authentication |
+| **Security Patch**  | 2021-08-05           | 🟡 HIGH     | 4+ years outdated       |
+| **su_daemon**       | RUNNING              | 🔴 CRITICAL | Root shell accessible   |
 
 ### 7.2 Attack Surface
 
 **Accessible via Network:**
+
 - ADB WiFi debugging (port 43039) - Root shell access
 - HTTP OTA server (192.168.1.1:8888) - Firmware injection
 - Astarte IoT (MQTT) - Cloud command injection
 - WiFi/Cellular - Standard network attacks
 
 **Physical Access:**
+
 - USB debugging (also has root)
 - Serial console (ttyFIQ0)
 - Bootloader (fastboot mode)
@@ -471,6 +479,7 @@ Authentication: Unknown (likely disabled in userdebug)
 ### 8.1 Control System Architecture
 
 **The Android tablet IS the industrial PC** - there is no separate control computer. The SECO C31 is an industrial-grade embedded Android computer designed for:
+
 - 24/7 operation
 - Wide temperature range
 - Industrial I/O (serial ports, GPIO)
@@ -618,6 +627,7 @@ External Hardware:
 ### 9.2 Init Services (from system properties)
 
 **Running Services:**
+
 ```
 init.svc.adbd = running                  (ADB daemon - ROOT ACCESS)
 init.svc.su_daemon = running             (Superuser daemon)
@@ -629,12 +639,14 @@ init.svc.hwservicemanager = running      (HIDL services)
 ```
 
 **SECO Custom Services:**
+
 ```
 init.svc.secoInit = stopped              (Ran at boot, then stopped)
 init.svc.secoBootComplete = stopped      (Boot completion hook)
 ```
 
 **Stopped/Disabled Services:**
+
 ```
 init.svc.ril-daemon = stopped            (RIL disabled - using Quectel)
 init.svc.bootanim = stopped              (Boot animation finished)
@@ -660,26 +672,27 @@ androidboot.storagemedia=emmc
 
 ### 10.1 Critical System Processes
 
-| Process | PID | Purpose | Status |
-|---------|-----|---------|--------|
-| `init` | 1 | Init system (PID 1) | Running |
-| `kthreadd` | 2 | Kernel thread manager | Running |
-| `ueventd` | 137 | Device node manager | Running |
-| `logd` | 157 | Android logging daemon | Running |
-| `servicemanager` | ~160s | Binder IPC manager | Running |
-| `hwservicemanager` | ~160s | HIDL service manager | Running |
-| `surfaceflinger` | ~160s | Graphics compositor | Running |
-| `su_daemon` | Running | **Root access daemon** | Running |
+| Process            | PID     | Purpose                | Status  |
+| ------------------ | ------- | ---------------------- | ------- |
+| `init`             | 1       | Init system (PID 1)    | Running |
+| `kthreadd`         | 2       | Kernel thread manager  | Running |
+| `ueventd`          | 137     | Device node manager    | Running |
+| `logd`             | 157     | Android logging daemon | Running |
+| `servicemanager`   | ~160s   | Binder IPC manager     | Running |
+| `hwservicemanager` | ~160s   | HIDL service manager   | Running |
+| `surfaceflinger`   | ~160s   | Graphics compositor    | Running |
+| `su_daemon`        | Running | **Root access daemon** | Running |
 
 ### 10.2 DMVI Application Processes
 
-| Process | PID | UID | Memory | Purpose |
-|---------|-----|-----|--------|---------|
-| `com.digitalmediavending.watchdog` | 1359 | u0_a130 | 150MB | Monitoring |
-| `com.digitalmediavending` | 1770 | u0_a132 | 294MB | Main UI |
-| `com.digitalmediavending.hardware` | 19863 | u0_a131 | 140MB | Hardware control |
+| Process                            | PID   | UID     | Memory | Purpose          |
+| ---------------------------------- | ----- | ------- | ------ | ---------------- |
+| `com.digitalmediavending.watchdog` | 1359  | u0_a130 | 150MB  | Monitoring       |
+| `com.digitalmediavending`          | 1770  | u0_a132 | 294MB  | Main UI          |
+| `com.digitalmediavending.hardware` | 19863 | u0_a131 | 140MB  | Hardware control |
 
 **Key Observations:**
+
 - All three apps running as separate processes
 - Hardware service has the highest PID (started last or restarted)
 - Watchdog has lowest memory (lightweight monitoring)
@@ -703,26 +716,28 @@ androidboot.storagemedia=emmc
 
 ### 11.1 Current DMVI System vs. Your Custom Stack
 
-| Component | DMVI System | Your Custom System |
-|-----------|-------------|-------------------|
-| **UI Framework** | Android (Java/Kotlin) | React Native 0.82 (TypeScript) |
-| **Backend** | AWS S3 + Astarte IoT | Node.js Express (local/cloud) |
-| **Motor Control** | Hardware Service APK | SerialPortModule.kt (native bridge) |
-| **Payment** | Nayax SDK (integrated) | Stubbed (free vend mode) |
-| **ID Verification** | IDScan SDK | Placeholder modal |
-| **Data Storage** | Astarte cloud sync | Mock data (PostgreSQL pending) |
-| **Kiosk Mode** | Built-in (launcher replacement) | MyDeviceAdminReceiver.kt |
-| **Auto-Start** | System app (automatic) | BootReceiver.kt |
+| Component           | DMVI System                     | Your Custom System                  |
+| ------------------- | ------------------------------- | ----------------------------------- |
+| **UI Framework**    | Android (Java/Kotlin)           | React Native 0.82 (TypeScript)      |
+| **Backend**         | AWS S3 + Astarte IoT            | Node.js Express (local/cloud)       |
+| **Motor Control**   | Hardware Service APK            | SerialPortModule.kt (native bridge) |
+| **Payment**         | Nayax SDK (integrated)          | Stubbed (free vend mode)            |
+| **ID Verification** | IDScan SDK                      | Placeholder modal                   |
+| **Data Storage**    | Astarte cloud sync              | Mock data (PostgreSQL pending)      |
+| **Kiosk Mode**      | Built-in (launcher replacement) | MyDeviceAdminReceiver.kt            |
+| **Auto-Start**      | System app (automatic)          | BootReceiver.kt                     |
 
 ### 11.2 Key Architectural Differences
 
 **DMVI Approach:**
+
 - **Monolithic system apps** - All functionality in pre-installed APKs
 - **Cloud-first** - All config and product data from Astarte
 - **Closed ecosystem** - Proprietary SDKs and protocols
 - **OTA updates** - Centralized firmware management
 
 **Your Custom Approach:**
+
 - **Modular architecture** - Separate frontend (RN) and backend (Node.js)
 - **API-driven** - RESTful backend with local/cloud flexibility
 - **Open protocols** - Standard serial communication, documented protocols
@@ -735,12 +750,14 @@ androidboot.storagemedia=emmc
 ### 12.1 Rockchip Flash Tools
 
 **RKDevTool (Windows):**
+
 - Official Rockchip flashing utility
 - Supports Maskrom mode and Loader mode
 - Can flash individual partitions or full firmware
 - Location: Typically `RKDevTool_v2.84` or newer
 
 **Upgrade_Tool (Linux):**
+
 - Command-line flashing tool
 - Same capabilities as RKDevTool
 - Usage: `upgrade_tool uf update.img`
@@ -748,6 +765,7 @@ androidboot.storagemedia=emmc
 ### 12.2 Entering Flash Modes
 
 **Maskrom Mode (Emergency):**
+
 1. Power off device
 2. Hold **Recovery** button
 3. Short **eMASK** pin to ground (or use hardware button)
@@ -755,6 +773,7 @@ androidboot.storagemedia=emmc
 5. Device appears as "Found One MASKROM Device"
 
 **Loader Mode (Normal Update):**
+
 1. `adb reboot bootloader` (or hold Volume+)
 2. Device enters fastboot/loader mode
 3. Use RKDevTool to flash partitions
@@ -774,6 +793,7 @@ adb pull /sdcard/boot.img
 ### 12.4 Factory Firmware Availability
 
 **No public firmware found** - SECO C31-specific images are likely proprietary. Contact:
+
 - SECO Spa (hardware manufacturer)
 - DMVI (software provider)
 - Or extract from working device using RKDevTool
@@ -787,6 +807,7 @@ adb pull /sdcard/boot.img
 **DEFINITIVELY ANSWERED:**
 
 The DMVI apps are installed as **system apps in the `/system` partition**, not as user apps in `/data`. Android's factory reset operation:
+
 - ✅ Wipes `/data` partition (user apps, settings, accounts)
 - ✅ Wipes `/cache` partition (temporary files)
 - ❌ **DOES NOT** wipe `/system` partition (OS and system apps)
@@ -798,6 +819,7 @@ The DMVI apps are installed as **system apps in the `/system` partition**, not a
 ### 13.2 Bootloader Analysis
 
 **Bootloader Type:** Rockchip Miniloader (proprietary)
+
 - NOT U-Boot (despite Rockchip sometimes using U-Boot, this device doesn't show U-Boot branding)
 - Unlocked (flash.locked=0)
 - Supports dynamic partitions (A/B updates)
@@ -808,6 +830,7 @@ The DMVI apps are installed as **system apps in the `/system` partition**, not a
 ### 13.3 Industrial PC Architecture
 
 **There is only ONE computer:** The SECO C31 embedded Android device IS the industrial PC. There's no separate "controller PC." Everything runs on Android:
+
 - User interface (touchscreen)
 - Motor control (via serial port)
 - Payment processing (via USB-Serial + Nayax SDK)
@@ -819,6 +842,7 @@ The DMVI apps are installed as **system apps in the `/system` partition**, not a
 ### 13.4 Security Posture
 
 **CRITICAL INSECURITY:** This device is running a development build with:
+
 - Root access enabled globally
 - SELinux in permissive mode (all security disabled)
 - ADB WiFi debugging active and accessible
@@ -868,16 +892,19 @@ The DMVI apps are installed as **system apps in the `/system` partition**, not a
 ### 14.3 Alternative Paths
 
 **Option A: Hybrid Approach**
+
 - Keep DMVI hardware service (motor/payment working)
 - Replace only the UI with your React Native app
 - Communicate via Binder IPC
 
 **Option B: Complete Replacement** (Your current path)
+
 - Replace all three DMVI apps
 - Full control over entire stack
 - More work, but total flexibility
 
 **Option C: Custom ROM**
+
 - Flash AOSP or LineageOS
 - Remove all SECO/DMVI customizations
 - Start with clean Android base
@@ -890,6 +917,7 @@ The DMVI apps are installed as **system apps in the `/system` partition**, not a
 ### 15.1 Analyzed Dump Files
 
 **DMVI_Data_20251120_150303/** (26 files)
+
 - `dmvi_main.apk` (20.6MB) - Main UI application
 - `dmvi_hardware.apk` (6.2MB) - Hardware service
 - `system_properties.txt` (59KB) - Build info, bootloader config
@@ -905,6 +933,7 @@ The DMVI apps are installed as **system apps in the `/system` partition**, not a
 - Plus 14 additional system analysis files
 
 **DMVI_Dump_20251120_154254/** (9 files)
+
 - `dmvi_main.apk` (20.6MB) - Same as above
 - `dmvi_hardware.apk` (6.2MB) - Same as above
 - `dmvi_watchdog.apk` (3.8MB) - Watchdog service (NEW)
@@ -918,6 +947,7 @@ The DMVI apps are installed as **system apps in the `/system` partition**, not a
 ### 15.2 Key Configuration Files
 
 **Astarte IoT Configs (XML with embedded JSON):**
+
 - `astarte...Planogram.xml` (29KB) - Product inventory
 - `astarte...Machine.xml` (840B) - Software versions
 - `astarte...Theme.xml` (1.5KB) - UI branding
@@ -947,11 +977,12 @@ The DMVI apps are installed as **system apps in the `/system` partition**, not a
 
 ## DOCUMENT CONTROL
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2025-11-21 | Claude Code | Initial comprehensive analysis |
+| Version | Date       | Author      | Changes                        |
+| ------- | ---------- | ----------- | ------------------------------ |
+| 1.0     | 2025-11-21 | Claude Code | Initial comprehensive analysis |
 
 **Data Sources:**
+
 - ADB system dumps (DMVI_Data_20251120_150303)
 - Extended dumps (DMVI_Dump_20251120_154254)
 - System property analysis (system_properties.txt)
@@ -963,6 +994,7 @@ The DMVI apps are installed as **system apps in the `/system` partition**, not a
 - Astarte IoT configurations (12 XML files)
 
 **Analysis Tools:**
+
 - Static file analysis
 - System property correlation
 - Partition layout reconstruction

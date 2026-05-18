@@ -64,13 +64,13 @@ class IdScannerManager(
                 serialPort = driver.ports[0]
                 serialPort?.open(usbManager.openDevice(usbDevice))
                 serialPort?.setParameters(
-                    HardwareService.SERIAL_BAUD_RATE,
+                    HardwareService.ID_SCANNER_BAUD_RATE,
                     8,
                     UsbSerialPort.STOPBITS_1,
                     UsbSerialPort.PARITY_NONE
                 )
 
-                Log.i(TAG, "Port open at ${HardwareService.SERIAL_BAUD_RATE} baud 8N1 — ready to scan")
+                Log.i(TAG, "Port open at ${HardwareService.ID_SCANNER_BAUD_RATE} baud 8N1 — ready to scan")
                 _isReady.value = true
                 startReading()
             } catch (e: Exception) {

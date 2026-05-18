@@ -2,7 +2,12 @@
 <resources>
     <!-- E-Seek M260 ID Scanner -->
     <usb-device vendor-id="1027" product-id="24577" />
-    <!-- Nayax VPOS Touch -->
+
+    <!-- Nayax VPOS Touch — internal FTDI Chipi-X (0x0403:0x6015) — THIS is the one that works -->
+    <usb-device vendor-id="1027" product-id="24597" />
+
+    <!-- Nayax VPOS Touch — CDC-ACM fallback (returns NAK only, use FTDI above) -->
     <usb-device vendor-id="9969" product-id="22096" />
+    <usb-device vendor-id="9969" product-id="8746" />
 </resources>
 
